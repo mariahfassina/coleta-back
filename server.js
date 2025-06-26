@@ -14,8 +14,11 @@ dotenv.config();
 connectDB();
 const app = express();
 
-// APLICA O CORS DA FORMA MAIS SIMPLES POSSÍVEL
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://coleta-back-teste.vercel.app/','https://coletareact.vercel.app/'], // coloca o domínio liberado aqui
+  methods: ['GET', 'POST', 'PUT', 'DELETE']
+}));
+
 
 app.use(express.json());
 
