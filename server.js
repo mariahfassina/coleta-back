@@ -28,7 +28,7 @@ const app = express();
 // Lista de domínios que têm permissão para acessar esta API.
 const whitelist = [
   'http://localhost:3000',        // Para o desenvolvimento local do React
-  'https://sitecoleta.vercel.app'  // URL de produção do seu site no Vercel
+  'https://coletareact.vercel.app/'  // URL de produção do seu site no Vercel
 ];
 
 const corsOptions = {
