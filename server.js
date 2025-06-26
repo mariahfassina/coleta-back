@@ -24,10 +24,29 @@ connectDB();
 const app = express();
 
 
-// ---- 4. Middlewares ----
-// Habilita o CORS para TODAS as origens. É a forma mais simples e garantida de resolver
-// problemas de CORS durante o desenvolvimento e para este projeto.
-app.use(cors());
+// ---- 1. Configuração do CORS (com Whitelist) ----
+// Lista de domínios que têm permissão para acessar esta API.
+const whitelist = [
+  'http://localhost:3000',        // Para o desenvolvimento local do React
+  'https://sitecoleta.vercel.app'  // URL de produção do seu site no Vercel
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    // A condição `!origin` permite requisições sem origem (como do Postman ou de apps mobile).
+    // A condição `whitelist.indexOf(origin) !== -1` verifica se a origem da requisição está na nossa lista de permissões.
+    if (!origin || whitelist.indexOf(origin) !== -1) {
+      // Se a origem for permitida, a resposta é enviada com sucesso.
+      callback(null, true);
+    } else {
+      // Se a origem não for permitida, a requisição é rejeitada com um erro de CORS.
+      callback(new Error('Não permitido pela política de CORS'));
+    }
+  },
+};
+
+// Aplica as opções de CORS à nossa aplicação. Esta deve ser uma das primeiras coisas.
+app.use(cors(corsOptions));
 
 // Permite que o servidor aceite e interprete dados no formato JSON
 app.use(express.json());
