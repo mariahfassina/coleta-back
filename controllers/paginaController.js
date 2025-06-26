@@ -146,6 +146,7 @@ const deletePagina = async (req, res) => {
 export {
   createPagina,
   getPaginas,
+  getQuemSomos,
   getPaginaBySlug,
   getPaginaById, // Exportando a nova função
   updatePagina,
