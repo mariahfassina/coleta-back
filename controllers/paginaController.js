@@ -47,6 +47,17 @@ const getPaginas = async (req, res) => {
   }
 };
 
+
+const getQuemSomos = async (req, res) => {
+  try {
+    const paginas = await Pagina.find({}).sort({ titulo: 1 });
+    res.json(paginas);
+  } catch (error) {
+    console.error('Erro em getPaginas:', error);
+    res.status(500).json({ message: 'Erro no servidor ao buscar páginas.' });
+  }
+};
+
 // --- FUNÇÃO PARA BUSCAR UMA PÁGINA ESPECÍFICA PELO SLUG (PARA O SITE PÚBLICO) ---
 // @desc    Buscar uma página específica pelo seu slug
 // @route   GET /api/paginas/slug/:slug

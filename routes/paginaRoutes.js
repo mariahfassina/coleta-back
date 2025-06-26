@@ -6,6 +6,7 @@ import express from 'express';
 import {
   createPagina,
   getPaginas,
+  getQuemSomos,
   getPaginaBySlug,
   getPaginaById, // <-- Importando a nova função
   updatePagina,
@@ -25,6 +26,10 @@ router.route('/')
   .get(protect, getPaginas)      // GET: Lista todas as páginas (apenas para admin logado)
   .post(protect, createPagina);  // POST: Cria uma nova página (apenas para admin logado)
 
+
+  router.route('/quem-somos')
+  .get(getQuemSomos)
+  .post(getQuemSomos);
 
 // Rota para buscar uma página pública pelo seu SLUG (identificador de texto)
 // Exemplo de acesso: GET /api/paginas/slug/quem-somos
