@@ -4,9 +4,8 @@ import express from 'express';
 import {
   createPagina,
   getPaginas,
-  getQuemSomos,
   getPaginaBySlug,
-  getPaginaById, // <-- Importando a nova função
+  getPaginaById,
   updatePagina,
   deletePagina,
 } from '../controllers/paginaController.js';
@@ -24,10 +23,6 @@ router.route('/')
   .get(protect, getPaginas) // GET: Lista todas as páginas (apenas para admin logado)
   .post(protect, createPagina); // POST: Cria uma nova página (apenas para admin logado)
 
-router.route('/quem-somos')
-  .get(getQuemSomos)
-  .post(getQuemSomos);
-
 // Rota para buscar uma página pública pelo seu SLUG (identificador de texto)
 // Exemplo de acesso: GET /api/paginas/slug/quem-somos
 // É importante ter o '/slug/' para não confundir com um ID.
@@ -43,4 +38,3 @@ router.route('/:id')
 
 // 4. Exporta o router configurado
 export default router;
-

@@ -1,5 +1,3 @@
-// controllers/paginaController.js
-
 import Pagina from '../models/Pagina.js';
 
 // --- FUNÇÃO PARA CRIAR UMA NOVA PÁGINA ---
@@ -38,17 +36,6 @@ const createPagina = async (req, res) => {
 // @route   GET /api/paginas
 // @access  Privado/Admin
 const getPaginas = async (req, res) => {
-  try {
-    const paginas = await Pagina.find({}).sort({ titulo: 1 });
-    res.json(paginas);
-  } catch (error) {
-    console.error('Erro em getPaginas:', error);
-    res.status(500).json({ message: 'Erro no servidor ao buscar páginas.' });
-  }
-};
-
-
-const getQuemSomos = async (req, res) => {
   try {
     const paginas = await Pagina.find({}).sort({ titulo: 1 });
     res.json(paginas);
@@ -146,9 +133,8 @@ const deletePagina = async (req, res) => {
 export {
   createPagina,
   getPaginas,
-  getQuemSomos,
   getPaginaBySlug,
-  getPaginaById, // Exportando a nova função
+  getPaginaById,
   updatePagina,
   deletePagina,
 };
