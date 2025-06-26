@@ -1,5 +1,5 @@
 // server.js - Ponto de entrada principal do Backend (v. Final com CORS)
-
+// Forçando o deploy - 25/06/2025
 // ---- 1. Importações Essenciais ----
 import path from 'path';
 import express from 'express';
