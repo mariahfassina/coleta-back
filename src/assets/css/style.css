@@ -1,0 +1,758 @@
+/* ===================================================
+   ARQUIVO DE ESTILOS FINAL - PROJETO COLETA SELETIVA
+   Versão: 4.1 (Alinhamento de Títulos em Mobile Corrigido)
+   =================================================== */
+
+/* === FONTE NUNITO SANS (DO GOOGLE FONTS) === */
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&display=swap');
+
+/* ===================================================
+   1. CONFIGURAÇÕES GLOBAIS E RESET
+   =================================================== */
+html {
+    box-sizing: border-box;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    color: #333;
+    line-height: 1.6;
+    background-color: #f8f9fa;
+    font-size: 16px; /* Tamanho base controlado pelo React para acessibilidade */
+    font-family: 'Nunito Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex-grow: 1;
+}
+
+.container {
+    width: 90%;
+    max-width: 1170px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+a {
+    text-decoration: none;
+    color: #0056b3;
+    font-weight: 700;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+a:hover {
+    color: #003366;
+    text-decoration: underline;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: inherit;
+    font-weight: 700;
+    color: #003366;
+    margin-top: 0;
+    margin-bottom: 15px;
+    line-height: 1.3;
+}
+
+h1 { font-size: 2.4em; margin-bottom: 25px; }
+h3 { font-size: 1.6em; }
+h4 { font-size: 1.3em; }
+
+strong, b {
+    font-weight: 700;
+    color: #111111;
+}
+
+/* ===================================================
+   2. CABEÇALHO E NAVEGAÇÃO
+   =================================================== */
+
+/* --- Barra de Utilidades (Topo) --- */
+.utility-bar {
+    background-color: #003366;
+    color: #ffffff;
+    padding: 5px 0;
+    border-top: 1px solid #004488;
+}
+
+.utility-bar .container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px;
+}
+
+.social-media a {
+    color: #ffffff;
+    font-size: 1.1em;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.social-media a:hover {
+    color: #aaa;
+    transform: scale(1.1);
+    text-decoration: none;
+}
+
+.accessibility-controls {
+    display: flex;
+    align-items: center;
+}
+
+.accessibility-controls button,
+.accessibility-controls a {
+    background: none;
+    border: 1px solid #ffffff;
+    color: #ffffff;
+    padding: 2px 8px;
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 700;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+}
+
+.accessibility-controls button:hover,
+.accessibility-controls a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    text-decoration: none;
+}
+
+/* --- Cabeçalho Principal --- */
+.main-header {
+    background-color: #ffffff;
+    padding: 15px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.main-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo {
+    height: 60px;
+    width: auto;
+}
+
+/* --- Navegação Principal (Desktop) --- */
+.main-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 5px 10px;
+}
+
+.main-nav ul li {
+    position: relative; 
+}
+
+.main-nav ul li a {
+    color: #003366;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 0.9em;
+    padding: 10px 4px;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.main-nav ul li a:hover,
+.main-nav ul li.active a {
+    color: #f0a500;
+    text-decoration: none;
+}
+
+.main-nav ul li a .icon-arrow {
+    margin-left: 5px;
+    font-size: 0.8em;
+    transition: transform 0.3s ease;
+}
+
+.main-nav ul li a[aria-label="Página Inicial"] {
+    font-size: 1.3em;
+    padding: 10px 8px;
+}
+
+/* --- Botão de Contato Destacado --- */
+.main-nav ul li.menu-contato-destaque a {
+    background-color: #003366;
+    color: #ffffff;
+    padding: 8px 18px;
+    border-radius: 25px;
+    border: 2px solid #003366;
+    margin-left: 10px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.main-nav ul li.menu-contato-destaque a:hover {
+    background-color: #001f3d;
+    border-color: #001f3d;
+    color: #ffffff;
+}
+
+/* --- Submenu (Desktop) --- */
+.submenu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    padding: 10px 0;
+    min-width: 250px;
+    z-index: 1001;
+    border-radius: 0 0 4px 4px;
+    border: 1px solid #eee;
+    border-top: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+}
+
+.main-nav ul li.has-submenu:hover > .submenu,
+.submenu.submenu-active { /* Funciona no hover e no clique (React) */
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.submenu li a {
+    color: #333;
+    padding: 10px 15px;
+    font-size: 0.9em;
+    text-transform: none;
+    font-weight: 400;
+    white-space: nowrap;
+    display: block;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.submenu li a:hover {
+    background-color: #f5f5f5;
+    color: #003366;
+}
+
+/* --- Botão Menu Hambúrguer (Escondido em Desktop) --- */
+.menu-toggle {
+    display: none;
+}
+
+/* ===================================================
+   3. CONTEÚDO PRINCIPAL
+   =================================================== */
+
+/* --- Seção Hero --- */
+#hero {
+    position: relative;
+    line-height: 0;
+}
+
+#hero img {
+    width: 100%;
+    height: auto;
+    max-height: 450px;
+}
+
+/* --- Seções de Informação (Padrão) --- */
+.info-section {
+    padding: 60px 15px;
+    background-color: #ffffff;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+main > section:last-of-type {
+    margin-bottom: 0;
+}
+
+/* --- Títulos das Seções (h2, h3) --- */
+.info-section h2 {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 2.1em;
+    position: relative;
+    padding-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.info-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background-color: #f0a500;
+    border-radius: 2px;
+}
+
+.info-section h3 {
+    text-align: center;
+    max-width: 740px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 25px;
+}
+
+.info-section h2 svg {
+    margin-right: 15px;
+    font-size: 0.9em;
+}
+
+.info-section h2.titulo-multilinha {
+    align-items: flex-start;
+}
+
+.info-section h2.titulo-multilinha svg {
+    margin-top: 5px;
+    flex-shrink: 0; 
+}
+
+/* --- Tipografia do Conteúdo --- */
+.info-section p {
+    text-align: justify;
+    font-size: 1.25em; 
+    line-height: 1.7;
+    color: #444444;
+    max-width: 740px;
+    margin: 0 auto 25px auto;
+}
+.info-section p:last-of-type {
+    margin-bottom: 0;
+}
+
+.info-section p.texto-destaque {
+    color: #003366;
+    font-size: 1.25em;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.info-section p a {
+    color: #0056b3;
+    text-decoration: underline;
+}
+.info-section p a:hover {
+    color: #003366;
+}
+
+/* --- Listas com Ícones --- */
+.info-section ul {
+    list-style-type: none;
+    padding-left: 0;
+    max-width: 740px;
+    margin: 0 auto 25px auto;
+}
+
+.info-section ul li {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.info-section ul li .lista-icone {
+    color: #0056b3;
+    font-size: 1.4em;
+    width: 25px;
+    text-align: center;
+    margin-top: 4px;
+    flex-shrink: 0;
+}
+
+.info-section ul li span {
+    text-align: justify;
+    font-size: 1.25em;
+    line-height: 1.7;
+    color: #444444;
+}
+
+.objetivos-lista li span {
+    font-size: 1.3em;
+    text-align: left;
+    font-weight: 400;
+    color: #333;
+}
+
+/* --- Mídia Incorporada --- */
+.info-section .youtube-video {
+    display: block;
+    margin: 35px auto;
+    max-width: 740px;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: none;
+}
+
+.info-section > .container > img {
+    margin: 35px auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Estilos para o Cronograma --- */
+.cronograma-container {
+    position: relative;
+    margin: 20px auto;
+}
+.zoom-hint {
+    display: none;
+}
+
+/* ===================================================
+   4. RODAPÉ
+   =================================================== */
+footer {
+    background-color: #ffffff;
+    color: #333;
+    padding: 0;
+    margin-top: 40px;
+    font-size: 0.9em;
+    border-top: 1px solid #ddd;
+}
+
+.footer-line {
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+}
+.footer-line:last-child {
+    border-bottom: none;
+}
+
+.footer-logos .container,
+.footer-ods .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px 20px;
+}
+
+.footer-section-title {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    color: #003366;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.footer-logos img, .footer-ods img {
+    vertical-align: middle;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+}
+.footer-logos img:hover, .footer-ods img:hover {
+    opacity: 1;
+}
+
+.footer-logos .logo-principal-parceiro { max-height: 110px; }
+.footer-logos .logo-parceiro { max-height: 95px; }
+.footer-ods img { max-height: 110px; }
+
+.footer-quick-links {
+    text-align: center;
+}
+
+.footer-quick-links a {
+    margin: 0 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.footer-copyright {
+    text-align: center;
+    padding: 20px 0;
+    margin: 0;
+    font-size: 0.85em;
+    color: #666;
+    background-color: #fdfdfd;
+}
+
+/* ===================================================
+   5. COMPONENTES REUTILIZÁVEIS
+   =================================================== */
+
+/* --- Botão Flutuante do Instagram --- */
+@keyframes pulse-float {
+    0% { transform: scale(1); box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3); }
+    50% { transform: scale(1.08); box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.4); }
+    100% { transform: scale(1); box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3); }
+}
+
+.sticky-insta {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #e4405f;
+    color: #ffffff;
+    padding: 10px 15px;
+    border-radius: 25px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    animation: pulse-float 2s infinite ease-in-out;
+}
+
+.sticky-insta:hover {
+    background-color: #d3304f;
+    animation-play-state: paused;
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.sticky-insta svg {
+    font-size: 1.3em;
+    margin-right: 8px;
+}
+
+.sticky-insta span {
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+/* ===================================================
+   6. RESPONSIVIDADE (MEDIA QUERIES)
+   =================================================== */
+
+/* --- Tablets e Laptops (até 1080px) --- */
+@media (max-width: 1080px) {
+    .main-header .container {
+        flex-wrap: wrap;
+        position: relative;
+    }
+
+    .menu-toggle {
+        display: block;
+        background: none;
+        border: 2px solid #003366;
+        color: #003366;
+        font-size: 1.5em;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 4px;
+        margin-left: auto;
+        order: 3;
+    }
+    .menu-toggle .icon-close { display: none; }
+    .menu-toggle.is-active .icon-open { display: none; }
+    .menu-toggle.is-active .icon-close { display: block; }
+
+    .main-nav {
+        display: none;
+        order: 4;
+        width: 100%;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: #ffffff;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        border-top: 1px solid #eee;
+        padding: 0;
+        z-index: 999;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+    }
+    
+    .main-nav.is-active {
+        display: block;
+        max-height: 80vh;
+        overflow-y: auto;
+        padding: 15px 0;
+    }
+
+    .main-nav ul {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+    }
+
+    .main-nav ul li {
+        width: 100%;
+        text-align: left;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .main-nav ul li:last-child {
+        border-bottom: none;
+    }
+    
+    .main-nav ul li a {
+        padding: 15px 20px;
+        width: 100%;
+        justify-content: space-between;
+        font-size: 1em;
+    }
+
+    .main-nav ul li a .icon-arrow {
+        display: block;
+    }
+    
+    .main-nav ul li a[aria-label="Página Inicial"] {
+        justify-content: flex-start;
+    }
+
+    .main-nav ul li.menu-contato-destaque a {
+        background-color: transparent;
+        color: #003366;
+        padding: 15px 20px;
+        border: none;
+        margin-left: 0;
+    }
+    .main-nav ul li.menu-contato-destaque a:hover {
+        background-color: #f5f5f5;
+    }
+
+    .submenu {
+        position: static;
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        min-width: auto;
+        background-color: #f9f9f9;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+    }
+
+    .submenu.submenu-active {
+        max-height: 500px;
+    }
+
+    .submenu li a {
+        padding: 12px 20px 12px 35px;
+        color: #333;
+        border-top: 1px solid #eee;
+    }
+}
+
+/* --- Celulares (até 768px) --- */
+@media (max-width: 768px) {
+    .container {
+        width: 100%;
+        padding: 0;
+    }
+
+    .info-section {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    /* CORREÇÃO PARA TÍTULOS NO MOBILE */
+    .info-section h2 {
+        font-size: 1.8em;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .info-section h2 svg {
+        margin-right: 0;
+        margin-bottom: 5px;
+    }
+    
+    .info-section p, .info-section ul li span, .objetivos-lista li span {
+        font-size: 1.2em;
+    }
+
+    /* Rodapé Mobile */
+    .footer-section-title {
+        font-size: 1.2em;
+        font-weight: 700;
+    }
+
+    .footer-logos .container,
+    .footer-ods .container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .footer-logos .logo-principal-parceiro,
+    .footer-logos .logo-parceiro,
+    .footer-ods img {
+        max-height: none;   
+        width: 45%;         
+        max-width: 160px;   
+        height: auto;       
+    }
+
+    .footer-quick-links a {
+        margin: 0 10px 10px 10px;
+    }
+
+    /* Dica de Zoom para Cronograma no Mobile */
+    @keyframes pulse-and-fade-out {
+        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+        15% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        30% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+        45% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        85% { opacity: 1; }
+        100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+    }
+    
+    .zoom-hint {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.75);
+        color: white;
+        padding: 10px 18px;
+        border-radius: 25px;
+        font-size: 1em;
+        z-index: 10;
+        pointer-events: none;
+        animation: pulse-and-fade-out 10s ease-in-out forwards;
+    }
+
+    .zoom-hint svg {
+        margin-right: 10px;
+        font-size: 1.1em;
+    }
+}

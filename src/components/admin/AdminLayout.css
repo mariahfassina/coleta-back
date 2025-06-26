@@ -1,0 +1,64 @@
+/* src/components/admin/AdminLayout.css */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+}
+
+.admin-sidebar {
+  width: 250px;
+  background-color: #003366;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  flex-shrink: 0;
+}
+
+.admin-sidebar h3 {
+  color: #f0a500;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.admin-sidebar nav {
+  flex-grow: 1;
+}
+
+.admin-sidebar nav a {
+  display: block;
+  color: white;
+  padding: 12px 15px;
+  text-decoration: none;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  transition: background-color 0.2s ease;
+  font-weight: normal;
+}
+
+.admin-sidebar nav a:hover, .admin-sidebar nav a.active {
+  background-color: #0056b3;
+  text-decoration: none;
+}
+
+.sidebar-footer {
+  border-top: 1px solid #0056b3;
+  padding-top: 20px;
+  text-align: center;
+}
+
+.sidebar-footer button {
+  background-color: #e4405f;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  cursor: pointer;
+  border-radius: 4px;
+  width: 100%;
+  font-size: 1em;
+}
+
+.admin-main-content {
+  flex-grow: 1;
+  padding: 40px;
+}

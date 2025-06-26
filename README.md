@@ -1,140 +1,70 @@
-Backend da API - Site Coleta Seletiva (PFC)
-Este repositório contém o código-fonte do backend para o site da Coleta Seletiva de Assis Chateaubriand. A aplicação foi desenvolvida em Node.js com Express.js e utiliza um banco de dados MongoDB para gerenciar todo o conteúdo do site de forma dinâmica.
-O objetivo desta API é fornecer endpoints seguros e funcionais para que o frontend (desenvolvido em React) possa consumir os dados e para que os administradores possam gerenciar o conteúdo através de um painel.
-Desenvolvedora Backend: Mariah
-Tecnologias Utilizadas
-Node.js: Ambiente de execução para JavaScript no servidor.
-Express.js: Framework para criação do servidor e das rotas da API.
-MongoDB (com Atlas): Banco de dados NoSQL na nuvem para armazenar todos os dados da aplicação.
-Mongoose: Biblioteca para modelar os dados da aplicação e interagir com o MongoDB.
-JSON Web Tokens (JWT): Para autenticação e proteção das rotas administrativas.
-bcryptjs: Para criptografia segura de senhas.
-Multer: Middleware para lidar com o upload de arquivos (imagens).
-Dotenv: Para gerenciamento de variáveis de ambiente.
-CORS: Para permitir requisições do frontend.
-Estrutura do Projeto
-O projeto segue uma arquitetura modular para separação de responsabilidades:
-config/: Contém a configuração de conexão com o banco de dados.
-controllers/: Contém a lógica de negócio da aplicação (o que cada rota faz).
-middleware/: Contém os "seguranças" da API, como o verificador de token.
-models/: Define os "moldes" (Schemas) de como os dados são estruturados no MongoDB.
-routes/: Mapeia as URLs (endpoints) para as funções dos controllers.
-uploads/: Pasta onde as imagens enviadas pelo painel de admin são armazenadas.
-Como Rodar o Projeto Localmente
-Para rodar este backend no seu ambiente de desenvolvimento, siga os passos abaixo:
-Clone o repositório:
-Generated bash
-git clone https://github.com/mariahfassina/coleta-back.git
-cd coleta-back
-Use code with caution.
-Bash
-Instale as dependências:
-Generated bash
-npm install
-Use code with caution.
-Bash
-Crie e configure o arquivo .env:
-Crie um arquivo chamado .env na raiz do projeto e adicione as seguintes variáveis:
-Generated code
-# String de conexão do seu cluster no MongoDB Atlas
-MONGO_URI=mongodb+srv://...
+# Getting Started with Create React App
 
-# Chave secreta para gerar os tokens JWT (pode ser qualquer string longa e aleatória)
-JWT_SECRET=meu-segredo-super-secreto-123
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-# Porta em que o servidor irá rodar
-PORT=5000
-Use code with caution.
-Popule o banco de dados com dados iniciais:
-Este comando irá criar o usuário administrador padrão e as páginas de conteúdo iniciais.
-Generated bash
-npm run data:import
-Use code with caution.
-Bash
-Inicie o servidor em modo de desenvolvimento:
-O servidor irá reiniciar automaticamente a cada alteração de arquivo.
-Generated bash
-npm run dev
-Use code with caution.
-Bash
-O servidor estará rodando em http://localhost:5000.
-Documentação da API (Contrato com o Frontend)
-URL Base (Produção): https://pfc-coleta-api.onrender.com
-URL Base (Desenvolvimento): http://localhost:5000
-Autenticação
-Login do Administrador
-Endpoint: POST /api/auth/login
-Descrição: Autentica um administrador e retorna um token JWT.
-Acesso: Público
-Corpo (Body) da Requisição (JSON):
-Generated json
-{
-  "email": "diretoria@assis.gov.br",
-  "password": "senha123"
-}
-Use code with caution.
-Json
-Resposta de Sucesso (200 OK):
-Generated json
-{
-  "_id": "...",
-  "nome": "Diretoria Meio Ambiente",
-  "email": "diretoria@assis.gov.br",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
-Use code with caution.
-Json
-Páginas de Conteúdo
-Buscar uma Página Específica
-Endpoint: GET /api/paginas/:slug
-Descrição: Retorna o conteúdo completo de uma página, identificado pelo seu slug. Usado para renderizar o conteúdo em todas as páginas públicas.
-Acesso: Público
-Parâmetros de URL:
-:slug (String): O identificador da página (ex: quem-somos, contato, home-cronograma).
-Resposta de Sucesso (200 OK):
-Generated json
-{
-    "_id": "...",
-    "slug": "quem-somos",
-    "titulo": "Sobre o Programa e a ACAMAR",
-    "conteudo": "<h1>O que é o Programa...</h1>...",
-    "midiaUrl": "/uploads/foto-acamar-uvr.jpg"
-}
-Use code with caution.
-Json
-Listar todas as Páginas (Painel Admin)
-Endpoint: GET /api/paginas
-Descrição: Retorna uma lista de todas as páginas gerenciáveis.
-Acesso: Privado (Requer Authorization: Bearer <token>)
-Atualizar uma Página
-Endpoint: PUT /api/paginas/:id
-Descrição: Atualiza o conteúdo de uma página existente.
-Acesso: Privado (Requer Authorization: Bearer <token>)
-Parâmetros de URL:
-:id (String): O _id da página no MongoDB.
-Corpo (Body) da Requisição (JSON):
-Generated json
-{
-  "titulo": "Novo Título da Página",
-  "conteudo": "<p>Novo conteúdo em HTML.</p>",
-  "midiaUrl": "/uploads/nova-imagem.png"
-}
-Use code with caution.
-Json
-Upload de Imagens
-Enviar uma Imagem
-Endpoint: POST /api/upload
-Descrição: Faz o upload de um arquivo de imagem. O painel de admin deve usar esta rota primeiro, pegar o caminho retornado e depois usá-lo para atualizar a midiaUrl de uma página.
-Acesso: Privado (Requer Authorization: Bearer <token>)
-Corpo (Body) da Requisição: form-data
-Campo: image
-Tipo: File
-Resposta de Sucesso (200 OK):
-Generated json
-{
-    "message": "Imagem enviada com sucesso",
-    "image": "/uploads/nome-da-imagem-12345.png"
-}
-Use code with caution.
-Json
-Observação para o Frontend: A URL base da API para desenvolvimento é http://localhost:5000. Para a versão final publicada, a URL será a fornecida pelo Render. Todas as imagens salvas terão seus caminhos retornados relativos à URL base (ex: https://pfc-coleta-api.onrender.com/uploads/imagem.png).
+## Available Scripts
+
+In the project directory, you can run:
+
+### `npm start`
+
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
+
+### `npm test`
+
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+### `npm run build`
+
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
+
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
+
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+### `npm run eject`
+
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+
+## Learn More
+
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+
+To learn React, check out the [React documentation](https://reactjs.org/).
+
+### Code Splitting
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+
+### Analyzing the Bundle Size
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+
+### Making a Progressive Web App
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+
+### Advanced Configuration
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+
+### Deployment
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+
+### `npm run build` fails to minify
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
