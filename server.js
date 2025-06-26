@@ -15,7 +15,7 @@ connectDB();
 const app = express();
 
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://coleta-back-teste.vercel.app/','https://coletareact.vercel.app/'], // coloca o domínio liberado aqui
+  origin: ['http://localhost:3000', 'https://coleta-back-teste.vercel.app/','https://coletareact.vercel.app/,'https://coletareact.vercel.app'], // coloca o domínio liberado aqui
   methods: ['GET', 'POST', 'PUT', 'DELETE']
 }));
 
