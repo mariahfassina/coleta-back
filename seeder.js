@@ -36,7 +36,7 @@ const paginasData = [
       <p>Separe os resíduos recicláveis, considerando o que for de papel, plástico, vidro e metal.</p>
       <p>Enxágue as embalagens e as coloque no saco de ráfia ou reaproveite sacolas e caixas de papelão. Depois, coloque na frente de sua casa/comércio, mas lembrando, é necessário que seja nos dias e períodos específicos, para o caminhão da <strong>“Coleta Amiga”</strong> passar recolhendo esses materiais, que são encaminhados para a Unidade de Valorização de Recicláveis do município.</p>
     `,
-    midiaUrl: 'https://www.youtube.com/embed/n9DEAh9c6vI' // Link do vídeo do YouTube
+    midiaUrl: 'https://youtu.be/cfYXew_H0LU' // Link do vídeo do YouTube
   },
   {
     slug: 'porque-separar',
@@ -45,7 +45,7 @@ const paginasData = [
       <p>A separação poupa a natureza e traz mais qualidade de vida. O plástico usado, por exemplo, quando reciclado se transforma em plástico novo. Isso também acontece com o papel, vidro e metal. Para se ter uma ideia, cada 50 quilos de papel usado transformado em novo, evita que uma árvore seja cortada. Imagine quantas árvores nós podemos salvar!</p>
       <p>O descarte correto de resíduos e rejeitos também é muito importante para evitar diversos tipos de prejuízo ao meio ambiente e até mesmo a nossa saúde, além de contribuir para a economia de recursos naturais, como água e a energia.</p>
     `,
-    midiaUrl: 'https://www.youtube.com/embed/0_PEVu_2omA'
+    midiaUrl: 'https://youtu.be/e2bnTHNV0Zw'
   },
   {
     slug: 'quais-residuos',
