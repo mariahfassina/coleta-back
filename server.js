@@ -43,4 +43,3 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
-```6.  Faça o commit com a mensagem: `FIX: Restaura server.js para versão estável`.
