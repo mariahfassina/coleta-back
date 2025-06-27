@@ -4,8 +4,8 @@
   "description": "Backend para o site da Coleta Seletiva de Assis Chateaubriand (PFC)",
   "main": "server.js",
   "type": "module",
- "scripts": {
-  "start": "npm run data:import",
+"scripts": {
+  "start": "node server.js",
   "dev": "nodemon server.js",
   "data:import": "node seeder.js"
 },
