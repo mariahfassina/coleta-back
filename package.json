@@ -1,20 +1,14 @@
 {
   "name": "coleta-back",
   "version": "1.0.0",
-  "description": "Backend para o site da Coleta Seletiva de Assis Chateaubriand (PFC)",
+  "description": "Backend para o site da Coleta Seletiva",
   "main": "server.js",
   "type": "module",
-"scripts": {
-  "start": "node server.js",
-  "dev": "nodemon server.js",
-  "data:import": "node seeder.js"
-},
-  "keywords": [
-    "pfc",
-    "backend",
-    "api",
-    "coleta-seletiva"
-  ],
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "data:import": "node seeder.js"
+  },
   "author": "Mariah",
   "license": "ISC",
   "dependencies": {
