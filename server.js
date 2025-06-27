@@ -2,6 +2,7 @@ import path from 'path';
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import jwt from 'jsonwebtoken';
 import connectDB from './config/db.js';
 
 import authRoutes from './routes/authRoutes.js';
@@ -16,8 +17,8 @@ const app = express();
 // CONFIGURAÇÃO OTIMIZADA DO CORS (ATUALIZADA)
 // =============================================
 const allowedOrigins = [
-  'https://coletareact.vercel.app', // Seu frontend na Vercel
-  'http://localhost:3000'           // Para desenvolvimento local
+  'https://coletareact.vercel.app',
+  'http://localhost:3000'
 ];
 
 app.use(cors({
@@ -35,7 +36,42 @@ app.options('*', cors());
 // MIDDLEWARES
 // =============================================
 app.use(express.json());
-app.disable('x-powered-by'); // Remove header X-Powered-By
+app.disable('x-powered-by');
+
+// Middleware de autenticação JWT
+const authenticateJWT = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  
+  if (authHeader) {
+    const token = authHeader.split(' ')[1];
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+      if (err) {
+        return res.sendStatus(403); // Token inválido
+      }
+
+      req.user = user;
+      next();
+    });
+  } else {
+    // Verifica se a rota é pública
+    const publicRoutes = [
+      '/api/auth/login',
+      '/api/auth/register',
+      '/api/paginas/home-hero',
+      '/api/paginas/home-cronograma',
+      '/health'
+    ];
+
+    if (publicRoutes.some(route => req.path.includes(route))) {
+      return next();
+    }
+
+    res.sendStatus(401); // Não autorizado
+  }
+};
+
+app.use(authenticateJWT);
 
 // =============================================
 // ROTAS DA API
@@ -53,7 +89,7 @@ app.get('/health', (req, res) => {
 });
 
 // =============================================
-// SERVIÇO DE ARQUIVOS ESTÁTICOS (APENAS BACKEND)
+// SERVIÇO DE ARQUIVOS ESTÁTICOS
 // =============================================
 const __dirname = path.resolve();
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
@@ -86,5 +122,6 @@ app.listen(PORT, () => {
   🚀 Servidor rodando em ${process.env.NODE_ENV || 'development'}
   📡 Porta: ${PORT}
   🌐 URLs permitidas: ${allowedOrigins.join(', ')}
+  🔒 Chave JWT: ${process.env.JWT_SECRET ? 'Configurada' : 'Não configurada!'}
   `);
 });
