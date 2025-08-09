@@ -100,4 +100,3 @@ const getAdmins = async (req, res) => {
 
 // Exporta as funções para serem usadas nas rotas
 export { loginAdmin, getAdmins, changePassword };
-
