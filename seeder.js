@@ -21,9 +21,10 @@ const connectDB = async () => {
 
 // Dados iniciais
 const adminUser = {
-  nome: 'Diretoria Meio Ambiente',
-  email: 'diretoria@assis.gov.br',
+  nome: 'Cassia',
+  email: 'cassia@email.com',
   password: 'senha123', // Senha para o primeiro login
+  needsPasswordChange: true // Usuário deve trocar a senha no primeiro login
 };
 
 const paginasData = [
