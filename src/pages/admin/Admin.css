@@ -1,0 +1,144 @@
+/* src/pages/admin/Admin.css */
+
+/* Estilo para a página de fundo e o container do login */
+.admin-page-background {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  padding: 20px;
+}
+
+.login-container {
+  padding: 40px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.login-container h2 {
+  margin-bottom: 30px;
+  color: #003366;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 700;
+  color: #555;
+}
+
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.btn-login, .btn-save {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background-color: #0056b3;
+  color: white;
+  font-size: 1.1em;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-login:hover, .btn-save:hover {
+  background-color: #003366;
+}
+
+.btn-login:disabled, .btn-save:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #d93025;
+  margin-top: -10px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Tabela do Dashboard */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.admin-table th, .admin-table td {
+  border: 1px solid #ddd;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.admin-table th {
+  background-color: #f2f2f2;
+  color: #333;
+  font-weight: 700;
+}
+
+.admin-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.btn-edit {
+  background-color: #28a745;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: normal;
+  display: inline-block;
+  transition: background-color 0.2s ease;
+}
+.btn-edit:hover {
+  background-color: #218838;
+  color: white;
+  text-decoration: none;
+}
+
+/* Formulário de Edição */
+.edit-form {
+  margin-top: 30px;
+}
+
+.media-preview img {
+  max-width: 250px;
+  max-height: 250px;
+  border: 1px solid #ddd;
+  padding: 5px;
+  margin-top: 10px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.media-preview p {
+  font-style: italic;
+  color: #555;
+}
+
+/* Estilo para o Editor de Texto Rico */
+.ql-editor {
+  min-height: 200px;
+  font-size: 16px;
+  background-color: #fff;
+}
