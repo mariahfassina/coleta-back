@@ -16,7 +16,8 @@ const app = express();
 const allowedOrigins = [
   'https://coletareact.vercel.app',
   'http://localhost:3000',
-  'https://coleta-front.vercel.app/'
+  'https://coleta-front.vercel.app/',
+   'http://127.0.0.1:3000'
 ];
 
 app.use(cors({ origin: allowedOrigins, credentials: true }));
