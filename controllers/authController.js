@@ -22,8 +22,7 @@ const loginAdmin = async (req, res) => {
     }
 
     // Procura o admin pelo email no banco de dados
-    const admin = await Admin.findOne({ email }).select('+password');
-
+  const admin = await Admin.findById(req.admin._id).select('+password'););
     // Verifica se o admin foi encontrado e se a senha está correta
     if (admin && (await admin.matchPassword(password))) {
       // Se estiver tudo certo, retorna os dados do admin e o token gerado
