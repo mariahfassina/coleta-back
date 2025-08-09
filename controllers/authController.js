@@ -61,7 +61,7 @@ const changePassword = async (req, res) => {
     }
 
     // Busca o admin pelo ID do token
-    const admin = await Admin.findById(req.user.id).select('+password');
+    const admin = await Admin.findById(req.admin._id.).select('+password');
 
     if (!admin) {
       return res.status(404).json({ message: 'Usuário não encontrado' });
