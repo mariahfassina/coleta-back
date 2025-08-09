@@ -11,7 +11,7 @@ dotenv.config();
 // Conecta ao banco de dados
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+await mongoose.connect('mongodb+srv://mariahfassina:coleta1234@pfc-coleta.yb67l6k.mongodb.net/?retryWrites=true&w=majority&appName=pfc-coleta');
     console.log('MongoDB Conectado para o Seeder...');
   } catch (error) {
     console.error(`Erro na conexão do Seeder: ${error.message}`);
