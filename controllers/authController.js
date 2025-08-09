@@ -1,5 +1,6 @@
 import Admin from '../models/Admin.js';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 
 // Função auxiliar para gerar o token JWT
 const generateToken = (id) => {
@@ -7,7 +8,6 @@ const generateToken = (id) => {
     expiresIn: '1d', // Token será válido por 1 dia
   });
 };
-
 
 // @desc    Autenticar um admin e retornar um token
 // @route   POST /api/auth/login
@@ -32,6 +32,7 @@ const loginAdmin = async (req, res) => {
         nome: admin.nome,
         email: admin.email,
         token: generateToken(admin._id),
+        needsPasswordChange: admin.needsPasswordChange || false
       });
     } else {
       // Caso contrário, retorna erro de não autorizado
@@ -43,6 +44,45 @@ const loginAdmin = async (req, res) => {
   }
 };
 
+// @desc    Trocar senha do usuário
+// @route   POST /api/auth/change-password
+// @access  Privado
+const changePassword = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  try {
+    // Validação de entrada
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Por favor, forneça a senha atual e a nova senha' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'A nova senha deve ter pelo menos 6 caracteres' });
+    }
+
+    // Busca o admin pelo ID do token
+    const admin = await Admin.findById(req.user.id).select('+password');
+
+    if (!admin) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    // Verifica se a senha atual está correta
+    if (!(await admin.matchPassword(currentPassword))) {
+      return res.status(400).json({ message: 'Senha atual incorreta' });
+    }
+
+    // Atualiza a senha
+    admin.password = newPassword;
+    admin.needsPasswordChange = false;
+    await admin.save();
+
+    res.json({ message: 'Senha alterada com sucesso' });
+  } catch (error) {
+    console.error('Erro ao alterar senha:', error);
+    res.status(500).json({ message: 'Erro no servidor' });
+  }
+};
 
 // @desc    Obter todos os admins (Rota de Teste Protegida)
 // @route   GET /api/auth/admins
@@ -58,6 +98,6 @@ const getAdmins = async (req, res) => {
   }
 };
 
+// Exporta as funções para serem usadas nas rotas
+export { loginAdmin, getAdmins, changePassword };
 
-// Exporta as duas funções para serem usadas nas rotas
-export { loginAdmin, getAdmins };
