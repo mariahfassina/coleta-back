@@ -1,31 +1,24 @@
 import Admin from '../models/Admin.js';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
 
-// Função auxiliar para gerar o token JWT
+// Gera o token JWT
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '1d', // Token será válido por 1 dia
-  });
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 };
 
-// @desc    Autenticar um admin e retornar um token
-// @route   POST /api/auth/login
-// @access  Público
+// LOGIN - Público
 const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Validação de entrada
     if (!email || !password) {
       return res.status(400).json({ message: 'Por favor, forneça email e senha' });
     }
 
-    // Procura o admin pelo email no banco de dados
-  const admin = await Admin.findById(req.admin._id).select('+password'););
-    // Verifica se o admin foi encontrado e se a senha está correta
+    // Busca pelo email
+    const admin = await Admin.findOne({ email }).select('+password');
+
     if (admin && (await admin.matchPassword(password))) {
-      // Se estiver tudo certo, retorna os dados do admin e o token gerado
       res.json({
         _id: admin._id,
         nome: admin.nome,
@@ -34,7 +27,6 @@ const loginAdmin = async (req, res) => {
         needsPasswordChange: admin.needsPasswordChange || false
       });
     } else {
-      // Caso contrário, retorna erro de não autorizado
       res.status(401).json({ message: 'Email ou senha inválidos' });
     }
   } catch (error) {
@@ -43,14 +35,15 @@ const loginAdmin = async (req, res) => {
   }
 };
 
-// @desc    Trocar senha do usuário
-// @route   POST /api/auth/change-password
-// @access  Privado
+// CHANGE PASSWORD - Privado
 const changePassword = async (req, res) => {
   const { currentPassword, newPassword } = req.body;
 
   try {
-    // Validação de entrada
+    if (!req.admin) {
+      return res.status(401).json({ message: 'Usuário não autenticado' });
+    }
+
     if (!currentPassword || !newPassword) {
       return res.status(400).json({ message: 'Por favor, forneça a senha atual e a nova senha' });
     }
@@ -59,19 +52,16 @@ const changePassword = async (req, res) => {
       return res.status(400).json({ message: 'A nova senha deve ter pelo menos 6 caracteres' });
     }
 
-    // Busca o admin pelo ID do token
-    const admin = await Admin.findById(req.admin._id.).select('+password');
+    const admin = await Admin.findById(req.admin._id).select('+password');
 
     if (!admin) {
       return res.status(404).json({ message: 'Usuário não encontrado' });
     }
 
-    // Verifica se a senha atual está correta
     if (!(await admin.matchPassword(currentPassword))) {
       return res.status(400).json({ message: 'Senha atual incorreta' });
     }
 
-    // Atualiza a senha
     admin.password = newPassword;
     admin.needsPasswordChange = false;
     await admin.save();
@@ -83,13 +73,10 @@ const changePassword = async (req, res) => {
   }
 };
 
-// @desc    Obter todos os admins (Rota de Teste Protegida)
-// @route   GET /api/auth/admins
-// @access  Privado/Admin
+// GET ADMINS - Privado
 const getAdmins = async (req, res) => {
-  // Se a requisição chegou até aqui, o middleware 'protect' já fez a validação.
   try {
-    const admins = await Admin.find({}); // Busca todos os documentos na coleção de admins
+    const admins = await Admin.find({});
     res.json(admins);
   } catch (error) {
     console.error('Erro ao buscar admins:', error);
@@ -97,5 +84,4 @@ const getAdmins = async (req, res) => {
   }
 };
 
-// Exporta as funções para serem usadas nas rotas
-export { loginAdmin, getAdmins, changePassword };
+export { loginAdmin, changePassword, getAdmins };
