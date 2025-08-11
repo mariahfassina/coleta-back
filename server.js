@@ -15,22 +15,22 @@ connectDB();
 const app = express();
 
 const allowedOrigins = [
-  'https://coletareact.vercel.app',
-  'http://localhost:3000',
-  'https://coleta-front.vercel.app',
-  'http://127.0.0.1:3000',
+  'https://coletareact.vercel.app',
+  'http://localhost:3000',
+  'https://coleta-front.vercel.app',
+  'http://127.0.0.1:3000',
 ];
 
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Não permitido por CORS'));
-    }
-  },
-  credentials: true,
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Não permitido por CORS'));
+    }
+  },
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
@@ -40,25 +40,25 @@ app.use(express.json());
 const __dirname = path.resolve();
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir);
+  fs.mkdirSync(uploadsDir);
 }
 
 // Rotas
 app.use('/api/auth', authRoutes);
-app.use('/api/app', appRoutes);
+app.use('/api/app', AppRoutes);
 app.use('/api/private', privateRoutes);
 app.use('/uploads', express.static(uploadsDir));
 
 // 404
 app.use((req, res, next) => {
-  res.status(404).json({ message: 'Rota não encontrada' });
+  res.status(404).json({ message: 'Rota não encontrada' });
 });
 
 // Tratamento de erros
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-  res.status(statusCode).json({ message: err.message });
+  console.error(err.stack);
+  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  res.status(statusCode).json({ message: err.message });
 });
 
 const PORT = process.env.PORT || 5000;
