@@ -6,7 +6,8 @@ import fs from 'fs';
 import connectDB from './config/db.js';
 
 import authRoutes from './routes/authRoutes.js';
-import uploadRoutes from './routes/uploadRoutes.js';
+import appRoutes from './routes/appRoutes.js';
+import privateRoutes from './routes/privateRoutes.js';
 
 dotenv.config();
 connectDB();
@@ -20,12 +21,9 @@ const allowedOrigins = [
   'http://127.0.0.1:3000',
 ];
 
-// Configuração CORS
 const corsOptions = {
   origin: function (origin, callback) {
-    // Permite requisições sem origem (ex: Postman, curl)
     if (!origin) return callback(null, true);
-
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
@@ -38,7 +36,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Criar pasta uploads se não existir
+// Criar pasta uploads se necessário
 const __dirname = path.resolve();
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
@@ -47,19 +45,20 @@ if (!fs.existsSync(uploadsDir)) {
 
 // Rotas
 app.use('/api/auth', authRoutes);
-app.use('/api/upload', uploadRoutes);
+app.use('/api/app', appRoutes);
+app.use('/api/private', privateRoutes);
 app.use('/uploads', express.static(uploadsDir));
 
-// Middleware para rotas não encontradas (404)
+// 404
 app.use((req, res, next) => {
   res.status(404).json({ message: 'Rota não encontrada' });
 });
 
-// Middleware para tratamento de erros
+// Tratamento de erros
 app.use((err, req, res, next) => {
-  console.error(err.stack); // Log do erro no console
+  console.error(err.stack);
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-  res.status(statusCode).json({ message: err.message || 'Erro no servidor' });
+  res.status(statusCode).json({ message: err.message });
 });
 
 const PORT = process.env.PORT || 5000;
