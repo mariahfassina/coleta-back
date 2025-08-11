@@ -62,4 +62,12 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
   console.error(err.stack); // Log do erro no console
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-  res.status(statusCode).json({ message:
+  res.status(statusCode).json({ message: err.message });
+});
+
+// Inicializa o servidor
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
+
