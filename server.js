@@ -5,9 +5,9 @@ import cors from 'cors';
 import fs from 'fs';
 import connectDB from './config/db.js';
 
-import authRoutes from './routes/authRoutes.js';
-import appRoutes from './routes/appRoutes.js';
-import privateRoutes from './routes/privateRoutes.js';
+import AuthRoutes from './routes/AuthRoutes.js';
+import AppRoutes from './routes/AppRoutes.js';
+import PrivateRoutes from './routes/PrivateRoutes.js';
 
 dotenv.config();
 connectDB();
