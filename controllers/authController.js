@@ -1,10 +1,12 @@
 import Admin from '../models/Admin.js';
 import jwt from 'jsonwebtoken';
 
+// Gera token JWT com id do admin
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 };
 
+// Login do admin
 const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
 
@@ -32,12 +34,9 @@ const loginAdmin = async (req, res) => {
   }
 };
 
+// Alterar senha do admin autenticado
 const changePassword = async (req, res) => {
   const { currentPassword, newPassword } = req.body;
-
-  if (!req.admin) {
-    return res.status(401).json({ message: 'Usuário não autenticado' });
-  }
 
   if (!currentPassword || !newPassword) {
     return res.status(400).json({ message: 'Por favor, forneça a senha atual e a nova senha' });
@@ -48,16 +47,19 @@ const changePassword = async (req, res) => {
   }
 
   try {
+    // req.admin vem do middleware de autenticação
     const admin = await Admin.findById(req.admin._id).select('+password');
 
     if (!admin) {
       return res.status(404).json({ message: 'Usuário não encontrado' });
     }
 
+    // Verifica se a senha atual confere
     if (!(await admin.matchPassword(currentPassword))) {
       return res.status(400).json({ message: 'Senha atual incorreta' });
     }
 
+    // Atualiza senha e reseta flag
     admin.password = newPassword;
     admin.needsPasswordChange = false;
 
@@ -70,6 +72,7 @@ const changePassword = async (req, res) => {
   }
 };
 
+// Listar todos os admins (exemplo)
 const getAdmins = async (req, res) => {
   try {
     const admins = await Admin.find({});
@@ -81,4 +84,3 @@ const getAdmins = async (req, res) => {
 };
 
 export { loginAdmin, changePassword, getAdmins };
-
