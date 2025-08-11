@@ -1,3 +1,5 @@
+// models/Admin.js
+
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
@@ -10,45 +12,49 @@ const adminSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, 'Por favor, adicione um email'],
-    unique: true,
+    unique: true, // Garante que cada email seja único no banco de dados
     match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, // Validação simples de formato de email
       'Por favor, adicione um email válido',
     ],
   },
   password: {
     type: String,
     required: [true, 'Por favor, adicione uma senha'],
-    minlength: 6,
-    select: false,
+    minlength: 6, // Senha deve ter no mínimo 6 caracteres
+    select: false, // Por padrão, a senha não será retornada quando buscarmos um admin
   },
   needsPasswordChange: {
     type: Boolean,
-    default: true,
+    default: true, // Por padrão, novos usuários precisam trocar a senha
   },
 }, {
-  timestamps: true,
+  // Adiciona os campos createdAt e updatedAt automaticamente
+  timestamps: true 
 });
 
-// 2. Middleware para criptografar a senha ANTES de salvar
+// 2. Middleware (Hook) para Criptografar a Senha ANTES de salvar
+// A função 'pre' define uma ação que acontece antes do evento 'save'
 adminSchema.pre('save', async function(next) {
-  // Se a senha NÃO foi modificada, pula para o próximo middleware
+  // Se a senha não foi modificada (ex: atualização do nome), não faz nada
   if (!this.isModified('password')) {
-    return next();
+    next();
   }
 
-  // Se modificada, gera o salt e criptografa a senha
+  // Gera um "salt" para fortalecer a criptografia
   const salt = await bcrypt.genSalt(10);
+  // Criptografa a senha e a substitui no documento
   this.password = await bcrypt.hash(this.password, salt);
-
-  next(); // importante chamar next() para continuar o fluxo
 });
 
-// 3. Método para comparar senha digitada com a senha armazenada
+// 3. Método para comparar a senha digitada com a senha do banco
+// Vamos adicionar este método ao nosso schema para poder usar em qualquer documento de Admin
 adminSchema.methods.matchPassword = async function(enteredPassword) {
+  // Compara a senha digitada com a senha criptografada (this.password)
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// 4. Exporta o model
+// 4. Exporta o Model
+// O Mongoose vai criar uma coleção chamada 'admins' no MongoDB com base neste schema
 export default mongoose.model('Admin', adminSchema);
 
