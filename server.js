@@ -6,7 +6,6 @@ import connectDB from './config/db.js';
 
 import authRoutes from './routes/authRoutes.js';
 import paginaRoutes from './routes/paginaRoutes.js';
-import uploadRoutes from './routes/uploadRoutes.js';
 
 dotenv.config();
 connectDB();
