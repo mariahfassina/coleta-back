@@ -14,14 +14,15 @@ import { protect } from '../middleware/authMiddleware.js';
 router.post('/login', loginAdmin);
 
 // --- ROTAS PROTEGIDAS ---
-// Só quem estiver autenticado pode acessar. Mapeia a URL /admins para a função getAdmins,
-// mas ANTES passa pelo "segurança" (o middleware 'protect').
+// Só quem estiver autenticado pode acessar.
+// A ordem é crucial: o middleware 'protect' DEVE ser executado antes da função do controller.
+
+// Rota para buscar administradores
 router.get('/admins', protect, getAdmins);
 
 // Rota para trocar senha - protegida
-router.post('/change-password', protect, changePassword);
+// Corrigido para o método PUT, que é o padrão para alterações
+router.put('/change-password', protect, changePassword);
 
-// 3. A LINHA MAIS IMPORTANTE QUE RESOLVE O ERRO
-// Exporta o router configurado para que o server.js possa usá-lo.
+// 3. Exporta o router configurado para que o server.js possa usá-lo.
 export default router;
-
