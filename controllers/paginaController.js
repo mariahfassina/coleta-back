@@ -12,13 +12,15 @@ const createPagina = async (req, res) => {
       return res.status(400).json({ message: 'Slug e título são obrigatórios.' });
     }
 
-    const paginaExists = await Pagina.findOne({ slug });
+    const slugFormatado = slug.trim().toLowerCase();
+
+    const paginaExists = await Pagina.findOne({ slug: slugFormatado });
     if (paginaExists) {
       return res.status(400).json({ message: 'Uma página com este slug já existe.' });
     }
 
     const pagina = await Pagina.create({
-      slug,
+      slug: slugFormatado,
       titulo,
       conteudo: conteudo || '',
       midiaUrl: midiaUrl || '',
@@ -45,12 +47,13 @@ const getPaginas = async (req, res) => {
 // --- FUNÇÃO PARA BUSCAR UMA PÁGINA ESPECÍFICA PELO SLUG (PARA O SITE PÚBLICO) ---
 const getPaginaBySlug = async (req, res) => {
   try {
-    const pagina = await Pagina.findOne({ slug: req.params.slug });
+    const slugParam = req.params.slug.trim().toLowerCase();
+    const pagina = await Pagina.findOne({ slug: slugParam });
 
     if (pagina) {
       res.json(pagina);
     } else {
-      res.status(404).json({ message: 'Página não encontrada.' });
+      res.status(404).json({ message: `Página com slug "${slugParam}" não encontrada.` });
     }
   } catch (error) {
     console.error('Erro em getPaginaBySlug:', error);
@@ -79,54 +82,56 @@ const getPaginaById = async (req, res) => {
 
 // --- FUNÇÃO PARA ATUALIZAR UMA PÁGINA ---
 const updatePagina = async (req, res) => {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-        return res.status(404).json({ message: 'Página não encontrada (ID inválido).' });
-    }
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(404).json({ message: 'Página não encontrada (ID inválido).' });
+  }
 
-    try {
-        const pagina = await Pagina.findById(req.params.id);
-        if (pagina) {
-            pagina.titulo = req.body.titulo || pagina.titulo;
-            pagina.conteudo = req.body.conteudo !== undefined ? req.body.conteudo : pagina.conteudo;
-            
-            if (req.body.midiaUrl) {
-                pagina.midiaUrl = req.body.midiaUrl;
-            } else if (req.body.midiaUrl === '') {
-                // Se enviar uma string vazia, não apaga a URL existente
-            }
+  try {
+    const pagina = await Pagina.findById(req.params.id);
+    if (pagina) {
+      if (req.body.slug) {
+        pagina.slug = req.body.slug.trim().toLowerCase();
+      }
+      pagina.titulo = req.body.titulo || pagina.titulo;
+      pagina.conteudo = req.body.conteudo !== undefined ? req.body.conteudo : pagina.conteudo;
+      
+      if (req.body.midiaUrl) {
+        pagina.midiaUrl = req.body.midiaUrl;
+      } else if (req.body.midiaUrl === '') {
+        // Se enviar uma string vazia, mantém a URL existente
+      }
 
-            const updatedPagina = await pagina.save();
-            res.json(updatedPagina);
-        } else {
-            res.status(404).json({ message: 'Página não encontrada para atualizar.' });
-        }
-    } catch (error) {
-        console.error('Erro em updatePagina:', error);
-        res.status(500).json({ message: 'Erro no servidor.' });
+      const updatedPagina = await pagina.save();
+      res.json(updatedPagina);
+    } else {
+      res.status(404).json({ message: 'Página não encontrada para atualizar.' });
     }
+  } catch (error) {
+    console.error('Erro em updatePagina:', error);
+    res.status(500).json({ message: 'Erro no servidor.' });
+  }
 };
 
 // --- FUNÇÃO PARA DELETAR UMA PÁGINA ---
 const deletePagina = async (req, res) => {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-        return res.status(404).json({ message: 'Página não encontrada (ID inválido).' });
-    }
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(404).json({ message: 'Página não encontrada (ID inválido).' });
+  }
 
-    try {
-        const pagina = await Pagina.findById(req.params.id);
-        if (pagina) {
-            await pagina.deleteOne(); 
-            res.json({ message: 'Página removida com sucesso.' });
-        } else {
-            res.status(404).json({ message: 'Página não encontrada para deletar.' });
-        }
-    } catch (error) {
-        console.error('Erro em deletePagina:', error);
-        res.status(500).json({ message: 'Erro no servidor.' });
+  try {
+    const pagina = await Pagina.findById(req.params.id);
+    if (pagina) {
+      await pagina.deleteOne(); 
+      res.json({ message: 'Página removida com sucesso.' });
+    } else {
+      res.status(404).json({ message: 'Página não encontrada para deletar.' });
     }
+  } catch (error) {
+    console.error('Erro em deletePagina:', error);
+    res.status(500).json({ message: 'Erro no servidor.' });
+  }
 };
 
-// Exporta todas as funções
 export {
   createPagina,
   getPaginas,
