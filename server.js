@@ -12,7 +12,7 @@ connectDB();
 const app = express();
 
 // =============================================
-// CONFIGURAÇÃO OTIMIZADA DO CORS (ATUALIZADA)
+// CONFIGURAÇÃO OTIMIZADA DO CORS (MULTIPLAS ORIGENS)
 // =============================================
 const allowedOrigins = [
   'https://coletareact.vercel.app', // Seu frontend na Vercel
@@ -20,7 +20,15 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: function(origin, callback) {
+    // Permite requisições sem origin (ex: curl, Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = `O CORS para esta origem não está permitido: ${origin}`;
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   credentials: true,
