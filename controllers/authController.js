@@ -1,21 +1,18 @@
 import Admin from '../models/Admin.js';
 import jwt from 'jsonwebtoken';
 
-// Gera o token JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 };
 
-// LOGIN - Público
 const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
 
-  try {
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Por favor, forneça email e senha' });
-    }
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Por favor, forneça email e senha' });
+  }
 
-    // Busca pelo email
+  try {
     const admin = await Admin.findOne({ email }).select('+password');
 
     if (admin && (await admin.matchPassword(password))) {
@@ -24,7 +21,7 @@ const loginAdmin = async (req, res) => {
         nome: admin.nome,
         email: admin.email,
         token: generateToken(admin._id),
-        needsPasswordChange: admin.needsPasswordChange || false
+        needsPasswordChange: admin.needsPasswordChange || false,
       });
     } else {
       res.status(401).json({ message: 'Email ou senha inválidos' });
@@ -35,23 +32,22 @@ const loginAdmin = async (req, res) => {
   }
 };
 
-// CHANGE PASSWORD - Privado
 const changePassword = async (req, res) => {
   const { currentPassword, newPassword } = req.body;
 
+  if (!req.admin) {
+    return res.status(401).json({ message: 'Usuário não autenticado' });
+  }
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ message: 'Por favor, forneça a senha atual e a nova senha' });
+  }
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({ message: 'A nova senha deve ter pelo menos 6 caracteres' });
+  }
+
   try {
-    if (!req.admin) {
-      return res.status(401).json({ message: 'Usuário não autenticado' });
-    }
-
-    if (!currentPassword || !newPassword) {
-      return res.status(400).json({ message: 'Por favor, forneça a senha atual e a nova senha' });
-    }
-
-    if (newPassword.length < 6) {
-      return res.status(400).json({ message: 'A nova senha deve ter pelo menos 6 caracteres' });
-    }
-
     const admin = await Admin.findById(req.admin._id).select('+password');
 
     if (!admin) {
@@ -64,6 +60,7 @@ const changePassword = async (req, res) => {
 
     admin.password = newPassword;
     admin.needsPasswordChange = false;
+
     await admin.save();
 
     res.json({ message: 'Senha alterada com sucesso' });
@@ -73,7 +70,6 @@ const changePassword = async (req, res) => {
   }
 };
 
-// GET ADMINS - Privado
 const getAdmins = async (req, res) => {
   try {
     const admins = await Admin.find({});
@@ -85,3 +81,4 @@ const getAdmins = async (req, res) => {
 };
 
 export { loginAdmin, changePassword, getAdmins };
+
