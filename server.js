@@ -41,7 +41,6 @@ app.disable('x-powered-by'); // Remove header X-Powered-By
 // =============================================
 app.use('/api/auth', authRoutes);
 app.use('/api/paginas', paginaRoutes);
-app.use('/api/upload', uploadRoutes);
 
 // Health Check
 app.get('/health', (req, res) => {
