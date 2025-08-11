@@ -1,14 +1,17 @@
 import Admin from '../models/Admin.js';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 
-// Função para gerar token JWT
+// Função auxiliar para gerar o token JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '1d',
+    expiresIn: '1d', // Token válido por 1 dia
   });
 };
 
-// Login público: busca admin pelo email e verifica senha
+// @desc    Autenticar um admin e retornar um token
+// @route   POST /api/auth/login
+// @access  Público
 const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
 
@@ -17,6 +20,7 @@ const loginAdmin = async (req, res) => {
       return res.status(400).json({ message: 'Por favor, forneça email e senha' });
     }
 
+    // Busca o admin pelo email (assumindo que no modelo Admin tem campo email)
     const admin = await Admin.findOne({ email }).select('+password');
 
     if (admin && (await admin.matchPassword(password))) {
@@ -25,7 +29,7 @@ const loginAdmin = async (req, res) => {
         nome: admin.nome,
         email: admin.email,
         token: generateToken(admin._id),
-        needsPasswordChange: admin.needsPasswordChange || false, // pode até remover essa linha se quiser
+        needsPasswordChange: admin.needsPasswordChange || false,
       });
     } else {
       res.status(401).json({ message: 'Email ou senha inválidos' });
@@ -36,7 +40,9 @@ const loginAdmin = async (req, res) => {
   }
 };
 
-// Rota protegida: listar admins (opcional)
+// @desc    Obter todos os admins (Rota de Teste Protegida)
+// @route   GET /api/auth/admins
+// @access  Privado/Admin
 const getAdmins = async (req, res) => {
   try {
     const admins = await Admin.find({});
@@ -47,4 +53,5 @@ const getAdmins = async (req, res) => {
   }
 };
 
+// Exporta somente as funções que vão ser usadas
 export { loginAdmin, getAdmins };
