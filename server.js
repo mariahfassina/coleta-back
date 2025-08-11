@@ -43,13 +43,8 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 // Rotas
-// Apenas a rota de autenticação é usada, pois é a única que existe no projeto
 app.use('/api/auth', authRoutes);
 
-// A linha abaixo foi removida, pois 'AppRoutes.js' não existe no backend.
-// app.use('/api/app', AppRoutes);
-// A linha abaixo foi removida, pois 'privateRoutes.js' não existe no backend.
-// app.use('/api/private', privateRoutes);
 
 
 app.use('/uploads', express.static(uploadsDir));
