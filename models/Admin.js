@@ -24,10 +24,6 @@ const adminSchema = new mongoose.Schema({
     minlength: 6, // Senha deve ter no mínimo 6 caracteres
     select: false, // Por padrão, a senha não será retornada quando buscarmos um admin
   },
-  needsPasswordChange: {
-    type: Boolean,
-    default: true, // Por padrão, novos usuários precisam trocar a senha
-  },
 }, {
   // Adiciona os campos createdAt e updatedAt automaticamente
   timestamps: true 
@@ -57,4 +53,3 @@ adminSchema.methods.matchPassword = async function(enteredPassword) {
 // 4. Exporta o Model
 // O Mongoose vai criar uma coleção chamada 'admins' no MongoDB com base neste schema
 export default mongoose.model('Admin', adminSchema);
-
