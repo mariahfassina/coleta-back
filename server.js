@@ -5,9 +5,8 @@ import cors from 'cors';
 import fs from 'fs';
 import connectDB from './config/db.js';
 
+// Importa apenas o arquivo de rotas que realmente existe no backend
 import authRoutes from './routes/authRoutes.js';
-import AppRoutes from './routes/AppRoutes.js';
-import privateRoutes from './routes/privateRoutes.js';
 
 dotenv.config();
 connectDB();
@@ -44,9 +43,15 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 // Rotas
+// Apenas a rota de autenticação é usada, pois é a única que existe no projeto
 app.use('/api/auth', authRoutes);
-app.use('/api/app', AppRoutes);
-app.use('/api/private', privateRoutes);
+
+// A linha abaixo foi removida, pois 'AppRoutes.js' não existe no backend.
+// app.use('/api/app', AppRoutes);
+// A linha abaixo foi removida, pois 'privateRoutes.js' não existe no backend.
+// app.use('/api/private', privateRoutes);
+
+
 app.use('/uploads', express.static(uploadsDir));
 
 // 404
