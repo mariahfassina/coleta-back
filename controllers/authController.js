@@ -1,57 +1,23 @@
-import Admin from '../models/Admin.js';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+// routes/authRoutes.js
 
-// Função auxiliar para gerar o token JWT
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '1d', // Token válido por 1 dia
-  });
-};
+import express from 'express';
+const router = express.Router();
 
-// @desc    Autenticar um admin e retornar um token
-// @route   POST /api/auth/login
-// @access  Público
-const loginAdmin = async (req, res) => {
-  const { email, password } = req.body;
+// 1. Importa as funções do controller
+import { loginAdmin, getAdmins } from '../controllers/authController.js';
 
-  try {
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Por favor, forneça email e senha' });
-    }
+// 2. Importa o middleware de proteção
+import { protect } from '../middleware/authMiddleware.js';
 
-    // Busca o admin pelo email (assumindo que no modelo Admin tem campo email)
-    const admin = await Admin.findOne({ email }).select('+password');
+// --- ROTAS PÚBLICAS ---
+// Qualquer um pode tentar fazer login. Mapeia a URL /login para a função loginAdmin.
+router.post('/login', loginAdmin);
 
-    if (admin && (await admin.matchPassword(password))) {
-      res.json({
-        _id: admin._id,
-        nome: admin.nome,
-        email: admin.email,
-        token: generateToken(admin._id),
-        needsPasswordChange: admin.needsPasswordChange || false,
-      });
-    } else {
-      res.status(401).json({ message: 'Email ou senha inválidos' });
-    }
-  } catch (error) {
-    console.error('Erro no login:', error);
-    res.status(500).json({ message: 'Erro no servidor' });
-  }
-};
+// --- ROTAS PROTEGIDAS ---
+// Só quem estiver autenticado pode acessar. Mapeia a URL /admins para a função getAdmins,
+// mas ANTES passa pelo "segurança" (o middleware 'protect').
+router.get('/admins', protect, getAdmins);
 
-// @desc    Obter todos os admins (Rota de Teste Protegida)
-// @route   GET /api/auth/admins
-// @access  Privado/Admin
-const getAdmins = async (req, res) => {
-  try {
-    const admins = await Admin.find({});
-    res.json(admins);
-  } catch (error) {
-    console.error('Erro ao buscar admins:', error);
-    res.status(500).json({ message: 'Erro no servidor' });
-  }
-};
-
-// Exporta somente as funções que vão ser usadas
-export { loginAdmin, getAdmins };
+// 3. A LINHA MAIS IMPORTANTE QUE RESOLVE O ERRO
+// Exporta o router configurado para que o server.js possa usá-lo.
+export default router;
