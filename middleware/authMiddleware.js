@@ -1,45 +1,41 @@
-// src/middleware/authMiddleware.js
-
 import jwt from 'jsonwebtoken';
 import Admin from '../models/Admin.js';
 
+// Middleware para proteger rotas
 const protect = async (req, res, next) => {
   let token;
 
-  // Verifica se o header Authorization existe e começa com 'Bearer '
+  // 1. Verifica se o cabeçalho de autorização existe e se começa com "Bearer"
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
   ) {
     try {
-      // Extrai o token do header
+      // 2. Extrai apenas o token do cabeçalho (formato: "Bearer TOKEN_AQUI")
       token = req.headers.authorization.split(' ')[1];
-      console.log('Token recebido no middleware protect:', token);
 
-      // Verifica e decodifica o token usando a chave secreta
+      // 3. Verifica e decodifica o token usando o seu segredo do .env
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log('Token decodificado:', decoded);
 
-      // Verifica se o decoded existe e tem a propriedade id
-      if (!decoded || !decoded.id) {
-        return res.status(401).json({ message: 'Token inválido' });
-      }
-
-      // Busca o usuário admin pelo id do token e exclui a senha
+      // 4. Usa o ID do token decodificado para buscar o admin no banco de dados.
+      // O '-password' garante que a senha criptografada não seja anexada ao objeto da requisição.
       req.admin = await Admin.findById(decoded.id).select('-password');
 
+      // Se o admin não for encontrado (ex: usuário deletado), bloqueia o acesso
       if (!req.admin) {
         return res.status(401).json({ message: 'Não autorizado, usuário não encontrado' });
       }
 
-      // Continua para a próxima função/middleware
+      // 5. Se o token for válido e o usuário existir, permite que a requisição continue para o controller.
       next();
     } catch (error) {
       console.error('Erro na verificação do token:', error);
-      return res.status(401).json({ message: 'Não autorizado, token inválido' });
+      return res.status(401).json({ message: 'Não autorizado, token falhou' });
     }
-  } else {
-    console.log('Nenhum token fornecido no header Authorization');
+  }
+
+  // Se não houver nenhum token no cabeçalho da requisição
+  if (!token) {
     return res.status(401).json({ message: 'Não autorizado, nenhum token fornecido' });
   }
 };
