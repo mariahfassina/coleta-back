@@ -1,20 +1,48 @@
 import Admin from '../models/Admin.js';
 import jwt from 'jsonwebtoken';
 
-// Função auxiliar para gerar o token JWT
+// ===========================
+// Função auxiliar para gerar JWT
+// ===========================
 const generateToken = (id) => {
   if (!process.env.JWT_SECRET) {
     console.error("⚠️ ERRO: JWT_SECRET não está definido no .env!");
     return null;
   }
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '1d', // Token válido por 1 dia
+    expiresIn: '1d',
   });
 };
 
-// @desc    Autenticar um admin e retornar um token
-// @route   POST /api/auth/login
-// @access  Público
+// ===========================
+// Middleware para proteger rotas
+// ===========================
+export const protect = async (req, res, next) => {
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    try {
+      token = req.headers.authorization.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.admin = await Admin.findById(decoded.id).select('-password');
+      if (!req.admin) {
+        return res.status(401).json({ message: 'Admin não encontrado' });
+      }
+      next();
+    } catch (error) {
+      console.error('Erro no middleware de auth:', error);
+      return res.status(401).json({ message: 'Não autorizado' });
+    }
+  } else {
+    return res.status(401).json({ message: 'Token não fornecido' });
+  }
+};
+
+// ===========================
+// Login de admin
+// ===========================
 const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
 
@@ -23,7 +51,6 @@ const loginAdmin = async (req, res) => {
       return res.status(400).json({ message: 'Por favor, forneça email e senha' });
     }
 
-    // Busca o admin pelo email (incluindo o campo senha)
     const admin = await Admin.findOne({ email }).select('+password');
 
     if (admin && await admin.matchPassword(password)) {
@@ -40,11 +67,11 @@ const loginAdmin = async (req, res) => {
         _id: admin._id,
         nome: admin.nome,
         email: admin.email,
+        role: admin.role || 'admin',
         token: tokenGerado,
         needsPasswordChange: admin.needsPasswordChange || false,
       });
     } else {
-      console.warn("⚠️ Tentativa de login inválida para:", email);
       res.status(401).json({ message: 'Email ou senha inválidos' });
     }
   } catch (error) {
@@ -53,12 +80,33 @@ const loginAdmin = async (req, res) => {
   }
 };
 
-// @desc    Obter todos os admins (Rota protegida)
-// @route   GET /api/auth/admins
-// @access  Privado/Admin
+// ===========================
+// Retorna dados do admin logado
+// ===========================
+const getMe = async (req, res) => {
+  try {
+    if (!req.admin) {
+      return res.status(401).json({ message: 'Não autorizado' });
+    }
+    res.json({
+      _id: req.admin._id,
+      nome: req.admin.nome,
+      email: req.admin.email,
+      role: req.admin.role || 'admin',
+      needsPasswordChange: req.admin.needsPasswordChange || false,
+    });
+  } catch (error) {
+    console.error('❌ Erro em /api/auth/me:', error);
+    res.status(500).json({ message: 'Erro no servidor' });
+  }
+};
+
+// ===========================
+// Listar todos os admins
+// ===========================
 const getAdmins = async (req, res) => {
   try {
-    const admins = await Admin.find({});
+    const admins = await Admin.find({}).select('-password');
     res.json(admins);
   } catch (error) {
     console.error('❌ Erro ao buscar admins:', error);
@@ -66,4 +114,4 @@ const getAdmins = async (req, res) => {
   }
 };
 
-export { loginAdmin, getAdmins };
+export { loginAdmin, getAdmins, getMe };
