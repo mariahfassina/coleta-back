@@ -19,6 +19,11 @@ const allowedOrigins = [
   'http://localhost:3000'           // Para desenvolvimento local
 ];
 
+// Adiciona a URL do frontend do ambiente, se existir
+if (process.env.REACT_APP_API_URL) {
+  allowedOrigins.push(process.env.REACT_APP_API_URL);
+}
+
 app.use(cors({
   origin: function(origin, callback) {
     // Permite requisições sem origin (ex: curl, Postman)
@@ -94,3 +99,5 @@ app.listen(PORT, () => {
   🌐 URLs permitidas: ${allowedOrigins.join(', ')}
   `);
 });
+
+
