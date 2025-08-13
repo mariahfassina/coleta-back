@@ -28,7 +28,19 @@ export const getPaginaBySlug = async (req, res) => {
     if (!pagina) {
       return res.status(404).json({ message: 'Página não encontrada' });
     }
-    res.json(pagina);
+    
+    // Adicionar timestamp formatado para o cronograma
+    const paginaResponse = pagina.toObject();
+    if (req.params.slug === 'cronograma' && pagina.updatedAt) {
+      const dataAtualizacao = new Date(pagina.updatedAt);
+      paginaResponse.ultimaAtualizacao = dataAtualizacao.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    }
+    
+    res.json(paginaResponse);
   } catch (error) {
     console.error('Erro ao buscar página por slug:', error);
     res.status(500).json({ message: 'Erro ao buscar página' });
