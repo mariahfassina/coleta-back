@@ -1,24 +1,46 @@
-// routes/authRoutes.js
-
 import express from 'express';
-const router = express.Router();
-
-// 1. Importa as funções do controller
+import multer from 'multer';
+import path from 'path';
 import { loginAdmin, getAdmins, getMe } from '../controllers/authController.js';
-
-// 2. Importa o middleware de proteção
 import { protect } from '../middleware/authMiddleware.js';
 
-// --- ROTAS PÚBLICAS ---
-// Qualquer um pode tentar fazer login. Mapeia a URL /login para a função loginAdmin.
+const router = express.Router();
+
+// ========================
+// Configuração do Multer
+// ========================
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/'), // pasta para salvar arquivos
+  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname)) // nome único
+});
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image/')) cb(null, true);
+  else cb(new Error('Só imagens são permitidas!'), false);
+};
+
+const upload = multer({ storage, fileFilter });
+
+// ========================
+// ROTAS PÚBLICAS
+// ========================
 router.post('/login', loginAdmin);
 
-// --- ROTAS PROTEGIDAS ---
-// Só quem estiver autenticado pode acessar. Mapeia a URL /admins para a função getAdmins,
-// mas ANTES passa pelo "segurança" (o middleware 'protect').
+// ========================
+// ROTAS PROTEGIDAS
+// ========================
 router.get('/admins', protect, getAdmins);
-router.get("/me", protect, getMe);
+router.get('/me', protect, getMe);
 
-// 3. A LINHA MAIS IMPORTANTE QUE RESOLVE O ERRO
-// Exporta o router configurado para que o server.js possa usá-lo.
+// ========================
+// ROTA DE UPLOAD DE IMAGEM
+// ========================
+router.post('/upload', protect, upload.single('foto'), (req, res) => {
+  if (!req.file) return res.status(400).send('Nenhum arquivo enviado');
+  res.json({ mensagem: 'Upload OK', arquivo: req.file.filename });
+});
+
+// ========================
+// Exporta o router
+// ========================
 export default router;
