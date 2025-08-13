@@ -17,6 +17,7 @@ router.post('/login', loginAdmin);
 // Só quem estiver autenticado pode acessar. Mapeia a URL /admins para a função getAdmins,
 // mas ANTES passa pelo "segurança" (o middleware 'protect').
 router.get('/admins', protect, getAdmins);
+router.get("/me", protect, getMe);
 
 // 3. A LINHA MAIS IMPORTANTE QUE RESOLVE O ERRO
 // Exporta o router configurado para que o server.js possa usá-lo.
