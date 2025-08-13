@@ -29,9 +29,9 @@ export const getPaginaBySlug = async (req, res) => {
       return res.status(404).json({ message: 'Página não encontrada' });
     }
     
-    // Adicionar timestamp formatado para o cronograma
+    // Adicionar timestamp formatado para o cronograma ou home-cronograma
     const paginaResponse = pagina.toObject();
-    if (req.params.slug === 'cronograma' && pagina.updatedAt) {
+    if ((req.params.slug === 'cronograma' || req.params.slug === 'home-cronograma') && pagina.updatedAt) {
       const dataAtualizacao = new Date(pagina.updatedAt);
       paginaResponse.ultimaAtualizacao = dataAtualizacao.toLocaleDateString('pt-BR', {
         day: '2-digit',
@@ -131,3 +131,4 @@ export const deletePagina = async (req, res) => {
     res.status(500).json({ message: 'Erro ao deletar página' });
   }
 };
+
