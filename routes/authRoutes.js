@@ -4,7 +4,7 @@ import express from 'express';
 const router = express.Router();
 
 // 1. Importa as funções do controller
-import { loginAdmin, getAdmins } from '../controllers/authController.js';
+import { loginAdmin, getAdmins, getMe } from '../controllers/authController.js';
 
 // 2. Importa o middleware de proteção
 import { protect } from '../middleware/authMiddleware.js';
