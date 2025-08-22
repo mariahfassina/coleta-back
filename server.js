@@ -1,11 +1,15 @@
+// server.js (Versão Final e Correta)
+
 import path from 'path';
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './config/db.js';
 
+// Importação das rotas
 import authRoutes from './routes/authRoutes.js';
 import paginaRoutes from './routes/paginaRoutes.js';
+import emailRoutes from './routes/emailRoutes.js'; // Esta linha já está correta
 
 dotenv.config();
 connectDB();
@@ -20,7 +24,7 @@ const allowedOrigins = [
 ];
 
 // Adiciona a URL do frontend do ambiente, se existir
-if (process.env.REACT_APP_API_URL) {
+if (process.env.REACT_APP_API_URL ) {
   allowedOrigins.push(process.env.REACT_APP_API_URL);
 }
 
@@ -54,6 +58,7 @@ app.disable('x-powered-by'); // Remove header X-Powered-By
 // =============================================
 app.use('/api/auth', authRoutes);
 app.use('/api/paginas', paginaRoutes);
+app.use('/api', emailRoutes); // Esta linha também já está correta
 
 // Health Check
 app.get('/health', (req, res) => {
@@ -99,5 +104,3 @@ app.listen(PORT, () => {
   🌐 URLs permitidas: ${allowedOrigins.join(', ')}
   `);
 });
-
-
