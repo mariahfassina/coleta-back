@@ -1,9 +1,6 @@
 import Pagina from '../models/Pagina.js';
-// ==================================================================
-// 1. IMPORTAR OS MÓDULOS NECESSÁRIOS
-// ==================================================================
-import EmailSubscription from '../models/EmailSubscription.js'; // Nosso modelo de e-mails
-import { transactionalEmailsApi } from '../config/brevo.js';    // Nossa API do Brevo configurada
+import EmailSubscription from '../models/EmailSubscription.js';
+import { transactionalEmailsApi } from '../config/brevo.js';
 
 // Listar todas as páginas (público ou admin)
 export const getPaginasPublic = async (req, res) => {
@@ -94,7 +91,9 @@ export const getPaginaById = async (req, res) => {
   }
 };
 
-// Atualizar página por ID
+// ==================================================================
+// ATUALIZAR PÁGINA (COM NOVA LÓGICA DE E-MAIL)
+// ==================================================================
 export const updatePagina = async (req, res) => {
   try {
     const pagina = await Pagina.findById(req.params.id);
@@ -112,9 +111,7 @@ export const updatePagina = async (req, res) => {
 
     const paginaAtualizada = await pagina.save();
 
-    // ==================================================================
-    // 2. LÓGICA DE DISPARO DE E-MAIL APÓS ATUALIZAR A PÁGINA
-    // ==================================================================
+    // --- LÓGICA DE DISPARO DE E-MAIL APÓS ATUALIZAR A PÁGINA ---
     if (paginaAtualizada.slug === 'home-cronograma') {
       console.log('-> Cronograma atualizado. Iniciando processo de notificação...');
 
@@ -127,99 +124,90 @@ export const updatePagina = async (req, res) => {
           const recipients = subscriptions.map(sub => ({ email: sub.email }));
           console.log(`-> Encontrados ${recipients.length} e-mails. Preparando para enviar...`);
 
+          // --- TEMPLATE HTML PREMIUM ---
+          const htmlContent = `
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <style>
+                body { margin: 0; padding: 0; background-color: #f4f7f6; font-family: Arial, sans-serif; }
+                .container { width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; }
+                .content { padding: 20px 30px 40px 30px; }
+                h1 { font-size: 24px; color: #003366; margin-top: 0; }
+                p { font-size: 16px; color: #555555; line-height: 1.6; }
+                .button { display: inline-block; background-color: #28a745; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+                .footer { background-color: #003366; color: #ffffff; padding: 20px 30px; text-align: center; font-size: 12px; }
+                .footer a { color: #ffffff; text-decoration: underline; }
+              </style>
+            </head>
+            <body>
+              <table class="container" role="presentation" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding: 20px 0; background-color: #003366;">
+                    <img src="https://i.imgur.com/URL_DA_SUA_LOGO.png" alt="Logo Coleta Amiga" width="180">
+                  </td>
+                </tr>
+                <tr>
+                  <td class="content">
+                    <h1>♻️ Novo cronograma disponível!</h1>
+                    <p>Olá, morador(a )!</p>
+                    <p>Temos novidades importantes: o cronograma da coleta seletiva do seu bairro foi atualizado.</p>
+                    <p>✅ Confira os novos dias e horários de coleta clicando no botão abaixo para não perder o dia certo!</p>
+                      
+
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr>
+                        <td align="center">
+                          <a href="https://coletareact.vercel.app/#cronograma" target="_blank" class="button">
+                            Ver Cronograma Atualizado
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                      
+
+                    <p style="text-align:center; font-style:italic; color:#0056b3;">Sua atitude faz a diferença 🌱</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="footer">
+                    <p style="margin:0 0 10px 0;">Prefeitura Municipal de Assis Chateaubriand  
+Secretaria de Meio Ambiente – Projeto Coleta Amiga</p>
+                    <p style="margin:0 0 10px 0;">
+                      <a href="https://www.instagram.com/uvr_assis/" target="_blank">Instagram</a> &nbsp;|&nbsp; 
+                      <a href="tel:+5544991833010" target="_blank">Telefone</a>
+                    </p>
+                    <p style="margin:0; font-size: 10px; opacity: 0.7;">
+                      Você recebeu este e-mail porque se inscreveu para receber atualizações.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </body>
+            </html>
+          `;
+
           const sendSmtpEmail = {
             to: recipients,
-            subject: 'O Cronograma da Coleta Seletiva foi Atualizado!',
-            htmlContent: `
-               <!DOCTYPE html>
-    <html lang="pt-BR">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <style>
-        /* Estilos gerais */
-        body { margin: 0; padding: 0; background-color: #f4f7f6; font-family: Arial, sans-serif; }
-        .container { width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; }
-        .content { padding: 20px 30px 40px 30px; }
-        h1 { font-size: 24px; color: #003366; margin-top: 0; }
-        p { font-size: 16px; color: #555555; line-height: 1.6; }
-        .button { display: inline-block; background-color: #28a745; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; }
-        .footer { background-color: #003366; color: #ffffff; padding: 20px 30px; text-align: center; font-size: 12px; }
-        .footer a { color: #ffffff; text-decoration: underline; }
-      </style>
-    </head>
-    <body>
-      <table class="container" role="presentation" border="0" cellpadding="0" cellspacing="0">
-        <!-- Cabeçalho com Logo -->
-        <tr>
-          <td align="center" style="padding: 20px 0;">
-            <img src="https://i.imgur.com/URL_DA_SUA_LOGO.png" alt="Logo Coleta Amiga" width="180">
-          </td>
-        </tr>
-        <!-- Conteúdo Principal -->
-        <tr>
-          <td class="content">
-            <h1>♻️ Novo cronograma disponível!</h1>
-            <p>Olá, morador(a )!</p>
-            <p>Temos novidades importantes: o cronograma da coleta seletiva do seu bairro foi atualizado.</p>
-            <p>✅ Confira os novos dias e horários de coleta clicando no botão abaixo para não perder o dia certo!</p>
-              
-
-            <!-- Botão Centralizado -->
-            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-              <tr>
-                <td align="center">
-                  <a href="https://coletareact.vercel.app/#cronograma" target="_blank" class="button">
-                    Ver Cronograma Atualizado
-                  </a>
-                </td>
-              </tr>
-            </table>
-              
-
-            <p style="text-align:center; font-style:italic; color:#0056b3;">Sua atitude faz a diferença 🌱</p>
-          </td>
-        </tr>
-        <!-- Rodapé -->
-        <tr>
-          <td class="footer">
-            <p style="margin:0 0 10px 0;">Prefeitura Municipal de Assis Chateaubriand  
-Secretaria de Meio Ambiente – Projeto Coleta Amiga</p>
-            <p style="margin:0 0 10px 0;">
-              <a href="https://www.instagram.com/uvr_assis/" target="_blank">Instagram</a> &nbsp;|&nbsp; 
-              <a href="tel:+5544991833010" target="_blank">Telefone</a>
-            </p>
-            <p style="margin:0; font-size: 10px; opacity: 0.7;">
-              Você recebeu este e-mail porque se inscreveu para receber atualizações. 
-              <!-- Se você tiver um link para cancelar inscrição, coloque aqui -->
-            </p>
-          </td>
-        </tr>
-      </table>
-    </body>
-    </html>
-  `;
+            subject: '📢 Cronograma da Coleta Seletiva Atualizado!',
+            htmlContent: htmlContent,
             sender: {
               name: 'Coleta Seletiva Assis Chateaubriand',
-              email: '20233017592@estudantes.ifpr.edu.br' 
+              email: 'nao-responda@coletaseletivaassis.com.br' // <<< LEMBRE-SE DE USAR UM E-MAIL VALIDADO
             }
           };
 
-          // Usando a API do Brevo para enviar o e-mail
           await transactionalEmailsApi.sendTransacEmail(sendSmtpEmail );
           console.log('-> Notificações por e-mail enviadas com sucesso para todos os inscritos!');
         }
       } catch (emailError) {
-        // Se o envio de e-mail falhar, o processo principal não para.
-        // A atualização da página já foi um sucesso. Apenas registramos o erro do e-mail.
         console.error('!!! ERRO GRAVE AO ENVIAR E-MAILS:', emailError);
       }
     }
-    // ==================================================================
-    // FIM DA LÓGICA DE DISPARO
-    // ==================================================================
-
-    res.json(paginaAtualizada); // A resposta para o front-end é enviada normalmente.
+    
+    res.json(paginaAtualizada);
 
   } catch (error) {
     console.error('Erro ao atualizar página:', error);
@@ -236,7 +224,6 @@ export const deletePagina = async (req, res) => {
       return res.status(404).json({ message: 'Página não encontrada' });
     }
 
-    // No Mongoose v6+, `remove()` foi depreciado em favor de `deleteOne()`
     await Pagina.deleteOne({ _id: req.params.id });
     res.json({ message: 'Página deletada com sucesso' });
   } catch (error) {
