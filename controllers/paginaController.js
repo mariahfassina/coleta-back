@@ -45,7 +45,7 @@ export const updatePagina = async (req, res) => {
           sendSmtpEmail.htmlContent = `... seu template HTML aqui ...`;
           sendSmtpEmail.sender = {
             name: 'Coleta Seletiva Assis Chateaubriand',
-            email: 'nao-responda@coletaseletivaassis.com.br'
+            email: '20233017592@estudantes.ifpr.edu.br'
           };
 
           await apiInstance.sendTransacEmail(sendSmtpEmail);
@@ -64,3 +64,4 @@ export const updatePagina = async (req, res) => {
 };
 
 export const deletePagina = async (req, res) => { /* ... */ };
+
