@@ -1,17 +1,23 @@
-// server.js (Versão Final e Correta)
-
 import path from 'path';
 import express from 'express';
 import dotenv from 'dotenv';
+import 'dotenv/config';
 import cors from 'cors';
 import connectDB from './config/db.js';
 
 // Importação das rotas
 import authRoutes from './routes/authRoutes.js';
 import paginaRoutes from './routes/paginaRoutes.js';
-import emailRoutes from './routes/emailRoutes.js'; // Esta linha já está correta
+import emailRoutes from './routes/emailRoutes.js';
 
-dotenv.config();
+
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+// ==================================================================
+
 connectDB();
 const app = express();
 
@@ -58,7 +64,7 @@ app.disable('x-powered-by'); // Remove header X-Powered-By
 // =============================================
 app.use('/api/auth', authRoutes);
 app.use('/api/paginas', paginaRoutes);
-app.use('/api', emailRoutes); // Esta linha também já está correta
+app.use('/api', emailRoutes);
 
 // Health Check
 app.get('/health', (req, res) => {
@@ -71,7 +77,7 @@ app.get('/health', (req, res) => {
 // =============================================
 // SERVIÇO DE ARQUIVOS ESTÁTICOS (APENAS BACKEND)
 // =============================================
-const __dirname = path.resolve();
+// const __dirname = path.resolve(); // Esta linha é removida pois já definimos __dirname acima
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 // =============================================

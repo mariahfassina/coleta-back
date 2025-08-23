@@ -72,7 +72,7 @@ const loginAdmin = async (req, res) => {
         needsPasswordChange: admin.needsPasswordChange || false,
       });
     } else {
-      res.status(401).json({ message: 'Email e/ou senha incorreta' });
+      res.status(401).json({ message: 'Email ou senha inválidos' });
     }
   } catch (error) {
     console.error('❌ Erro no login:', error);
