@@ -26,7 +26,7 @@ const app = express();
 // =============================================
 const allowedOrigins = [
   'http://localhost:3000',
-   'https://coletareact.vercel.app'          // Para desenvolvimento local
+  'https://coletareact.vercel.app'          // Para desenvolvimento local
 ];
 
 
@@ -111,4 +111,5 @@ app.listen(PORT, () => {
   🌐 URLs permitidas: ${allowedOrigins.join(', ')}
   `);
 });
+
 
