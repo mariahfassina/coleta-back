@@ -25,9 +25,10 @@ const app = express();
 // CONFIGURAÇÃO OTIMIZADA DO CORS (MULTIPLAS ORIGENS)
 // =============================================
 const allowedOrigins = [
-  'https://coletareact.vercel.app', // Seu frontend na Vercel
-  'http://localhost:3000'           // Para desenvolvimento local
+  'http://localhost:3000',
+   'https://coletareact.vercel.app'          // Para desenvolvimento local
 ];
+
 
 // Adiciona a URL do frontend do ambiente, se existir
 if (process.env.REACT_APP_API_URL ) {
@@ -110,3 +111,4 @@ app.listen(PORT, () => {
   🌐 URLs permitidas: ${allowedOrigins.join(', ')}
   `);
 });
+
