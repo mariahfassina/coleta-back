@@ -268,7 +268,7 @@ export const updatePagina = async (req, res) => {
             <tr>
               <td>
                 <h1>O caminhão da coleta tem novas datas para passar no seu bairro!</h1>
-                <p>Olá, vizinho(a )! Para manter nossa cidade um exemplo, o cronograma da coleta seletiva foi atualizado. Fique por dentro para não perder o dia!</p>
+                <p>Olá, Morador(a)! Para manter nossa cidade um exemplo, o cronograma da coleta seletiva foi atualizado. Fique por dentro para não perder o dia!</p>
               </td>
             </tr>
             <tr>
@@ -290,7 +290,7 @@ export const updatePagina = async (req, res) => {
               <td>
                 <p style="font-weight: 600; font-size: 14px;">Sua atitude faz a diferença 🌱</p>
                 <p>Prefeitura de Assis Chateaubriand &bull; Projeto Coleta Amiga</p>
-                <p style="font-size: 10px; opacity: 0.7; margin-top: 20px;">Você recebe este e-mail por ser um amigo(a ) do meio ambiente e ter se cadastrado para receber nossas atualizações.</p>
+                <p style="font-size: 10px; opacity: 0.7; margin-top: 20px;">Você recebe este e-mail por ter se cadastrado para receber nossas atualizações.</p>
               </td>
             </tr>
           </table>
@@ -341,6 +341,7 @@ export const deletePagina = async (req, res) => {
     res.status(500).json({ message: 'Erro ao deletar página' });
   }
 };
+
 
 
 
