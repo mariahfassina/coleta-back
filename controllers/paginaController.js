@@ -154,7 +154,7 @@ export const updatePagina = async (req, res) => {
               <table class="container" role="presentation" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td align="center" style="padding: 20px 0; background-color: #003366;">
-                    <img src="https://i.imgur.com/URL_DA_SUA_LOGO.png" alt="Logo Coleta Amiga" width="180">
+                    <img src="uploads/logo-coleta-amiga.png" alt="Logo Coleta Amiga" width="180">
                   </td>
                 </tr>
                 <tr>
@@ -234,4 +234,5 @@ export const deletePagina = async (req, res) => {
     res.status(500).json({ message: 'Erro ao deletar página' });
   }
 };
+
 
