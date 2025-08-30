@@ -198,7 +198,7 @@ Secretaria de Meio Ambiente – Projeto Coleta Amiga</p>
           `;
           sendSmtpEmail.sender = {
             name: 'Coleta Seletiva Assis Chateaubriand',
-            email: 'nao-responda@coletaseletivaassis.com.br'
+            email: '20233017592@estudantes.ifpr.edu.br'
           };
 
           await apiInstance.sendTransacEmail(sendSmtpEmail );
@@ -234,3 +234,4 @@ export const deletePagina = async (req, res) => {
     res.status(500).json({ message: 'Erro ao deletar página' });
   }
 };
+
