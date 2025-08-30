@@ -135,66 +135,211 @@ export const updatePagina = async (req, res) => {
           sendSmtpEmail.subject = '📢 Cronograma da Coleta Seletiva Atualizado!';
           sendSmtpEmail.htmlContent = `
             <!DOCTYPE html>
-            <html lang="pt-BR">
-            <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <style>
-                body { margin: 0; padding: 0; background-color: #f4f7f6; font-family: Arial, sans-serif; }
-                .container { width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; }
-                .content { padding: 20px 30px 40px 30px; }
-                h1 { font-size: 24px; color: #003366; margin-top: 0; }
-                p { font-size: 16px; color: #555555; line-height: 1.6; }
-                .button { display: inline-block; background-color: #28a745; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; }
-                .footer { background-color: #003366; color: #ffffff; padding: 20px 30px; text-align: center; font-size: 12px; }
-                .footer a { color: #ffffff; text-decoration: underline; }
-              </style>
-            </head>
-            <body>
-              <table class="container" role="presentation" border="0" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td align="center" style="padding: 20px 0; background-color: #003366;">
-                    <img src="uploads/logo-coleta-amiga.png" alt="Logo Coleta Amiga" width="180">
-                  </td>
-                </tr>
-                <tr>
-                  <td class="content">
-                    <h1>♻️ Novo cronograma disponível!</h1>
-                    <p>Olá, morador(a )!</p>
-                    <p>Temos novidades importantes: o cronograma da coleta seletiva do seu bairro foi atualizado.</p>
-                    <p>✅ Confira os novos dias e horários de coleta clicando no botão abaixo para não perder o dia certo!</p>
-                      
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>📢 Cronograma da Coleta Seletiva Atualizado!</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      supported-color-schemes: light dark;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100% !important;
+      background-color: #eef0f2;
+      font-family: 'Poppins', Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .wrapper {
+      width: 100%;
+      table-layout: fixed;
+      background-color: #eef0f2;
+      padding: 40px 0;
+    }
+    .main {
+      background-color: #ffffff;
+      margin: 0 auto;
+      width: 100%;
+      max-width: 600px;
+      border-spacing: 0;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1 );
+    }
+    .header {
+      background-color: #003366;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    .header img {
+      width: 180px;
+      max-width: 100%;
+    }
+    .content {
+      padding: 48px 40px;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1e2a3a;
+      margin: 0 0 16px 0;
+      line-height: 1.2;
+    }
+    p {
+      font-size: 16px;
+      line-height: 1.7;
+      color: #4a5568;
+      margin: 0 0 24px 0;
+    }
+    .button-wrapper {
+      text-align: center;
+      padding: 10px 0;
+    }
+    .button {
+      display: inline-block;
+      background-color: #28a745;
+      color: #ffffff;
+      padding: 16px 36px;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+    }
+    .button:hover {
+      background-color: #218838;
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+    }
+    .highlight {
+      margin-top: 32px;
+      padding: 20px;
+      background-color: #f7fafc;
+      border-left: 4px solid #28a745;
+      font-style: italic;
+      color: #2d3748;
+    }
+    .footer {
+      background-color: #1e2a3a;
+      color: #a0aec0;
+      padding: 40px;
+      text-align: center;
+      font-size: 12px;
+    }
+    .footer .social-icon {
+      display: inline-block;
+      margin: 0 10px 20px 10px;
+      transition: transform 0.2s ease;
+    }
+    .footer .social-icon:hover {
+      transform: scale(1.1);
+    }
+    .footer p {
+      font-size: 12px;
+      color: #a0aec0;
+      margin: 0 0 8px 0;
+    }
+    .footer a {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    @media (prefers-color-scheme: dark) {
+      body, .wrapper { background-color: #1a202c !important; }
+      .main { background-color: #2d3748 !important; }
+      h1, .highlight { color: #edf2f7 !important; }
+      p { color: #a0aec0 !important; }
+      .highlight { background-color: #4a5568 !important; border-left-color: #38a169 !important; }
+      .footer { background-color: #171923 !important; }
+      .footer p { color: #718096 !important; }
+      .footer a { color: #e2e8f0 !important; }
+    }
+  </style>
+</head>
+<body>
+  <center class="wrapper">
+    <table class="main" role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+      <!-- HEADER -->
+      <tr>
+        <td class="header">
+          <img src="https://coletareact.vercel.app/logo-coleta-amiga.png" alt="Logo Coleta Amiga" width="180">
+        </td>
+      </tr>
 
-                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-                      <tr>
-                        <td align="center">
-                          <a href="https://coletareact.vercel.app/#cronograma" target="_blank" class="button">
-                            Ver Cronograma Atualizado
-                          </a>
-                        </td>
-                      </tr>
-                    </table>
-                      
+      <!-- CONTEÚDO PRINCIPAL -->
+      <tr>
+        <td class="content">
+          <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+              <td>
+                <h1>O futuro da nossa cidade está em suas mãos. E no seu lixo.</h1>
+                <p>Olá, morador(a )!</p>
+                <p>Para continuarmos construindo uma Assis Chateaubriand mais verde e sustentável, o cronograma da coleta seletiva foi atualizado. Sua participação é o motor da nossa mudança.</p>
+                <p>Confira as novas datas e horários para garantir que seu bairro continue sendo um exemplo de cidadania e cuidado com o meio ambiente.</p>
+              </td>
+            </tr>
+            <tr>
+              <td class="button-wrapper">
+                <a href="https://coletareact.vercel.app/#cronograma" target="_blank" class="button">
+                  Ver o Novo Cronograma
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="highlight">
+                  <p style="margin:0;">"A mudança que queremos no mundo começa na separação do lixo em nossa casa."</p>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
 
-                    <p style="text-align:center; font-style:italic; color:#0056b3;">Sua atitude faz a diferença 🌱</p>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="footer">
-                    <p style="margin:0 0 10px 0;">Prefeitura Municipal de Assis Chateaubriand  
-Secretaria de Meio Ambiente – Projeto Coleta Amiga</p>
-                    <p style="margin:0 0 10px 0;">
-                      <a href="https://www.instagram.com/uvr_assis/" target="_blank">Instagram</a> &nbsp;|&nbsp; 
-                      <a href="tel:+5544991833010" target="_blank">Telefone</a>
-                    </p>
-                    <p style="margin:0; font-size: 10px; opacity: 0.7;">
-                      Você recebeu este e-mail porque se inscreveu para receber atualizações.
-                    </p>
-                  </td>
-                </tr>
-              </table>
-            </body>
-            </html>
+      <!-- RODAPÉ -->
+      <tr>
+        <td class="footer">
+          <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+              <td class="social-links">
+                <a href="https://www.instagram.com/uvr_assis/" target="_blank" class="social-icon">
+                  <img src="https://i.ibb.co/7jX0c7G/instagram-icon.png" alt="Instagram" width="32" border="0">
+                </a>
+                <a href="tel:+5544991833010" target="_blank" class="social-icon">
+                  <img src="https://i.ibb.co/N2h5P2T/phone-icon.png" alt="Telefone" width="32" border="0">
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p><strong>Prefeitura Municipal de Assis Chateaubriand</strong></p>
+                <p>Secretaria de Meio Ambiente – Projeto Coleta Amiga</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding-top: 20px;">
+                <p style="font-size: 10px; opacity: 0.7;">Você recebeu este e-mail porque se inscreveu para receber atualizações do cronograma.</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </center>
+</body>
+</html>
+
           `;
           sendSmtpEmail.sender = {
             name: 'Coleta Seletiva Assis Chateaubriand',
@@ -234,5 +379,6 @@ export const deletePagina = async (req, res) => {
     res.status(500).json({ message: 'Erro ao deletar página' });
   }
 };
+
 
 
