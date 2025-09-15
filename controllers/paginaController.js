@@ -55,7 +55,22 @@ export const getPaginaBySlug = async (req, res) => {
     if (!pagina) {
       return res.status(404).json({ message: 'Página não encontrada' });
     }
-    res.json(pagina);
+
+    // Formata a data para o padrão brasileiro (dd/mm/aaaa)
+    const dataFormatada = new Date(pagina.updatedAt).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+
+    // Cria um novo objeto para enviar como resposta, incluindo a data formatada
+    const paginaComUltimaAtualizacao = {
+      ...pagina.toObject(), // Converte o documento do Mongoose para um objeto simples
+      ultimaAtualizacao: dataFormatada, // Adiciona o novo campo que o front-end espera
+    };
+
+    res.json(paginaComUltimaAtualizacao);
+
   } catch (err) {
     console.error('❌ Erro em getPaginaBySlug:', err.message);
     res.status(500).json({ message: err.message });
