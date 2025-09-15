@@ -23,4 +23,19 @@ const storage = new CloudinaryStorage({
   },
 });
 
+
+// Configura o storage para o Multer
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => { // Usando uma função assíncrona
+    return {
+      folder: 'coleta-seletiva', // Garante que a pasta seja usada
+      allowed_formats: ['jpeg', 'png', 'jpg', 'gif', 'webp'],
+      transformation: [{ width: 1920, height: 1080, crop: 'limit' }],
+    };
+  },
+});
+
+export default storage;
+
 export default storage;
