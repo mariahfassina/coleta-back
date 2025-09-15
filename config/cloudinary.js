@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Configura o SDK do Cloudinary com as credenciais do seu ambiente
+// Usamos a versão 1.x, então não precisamos do 'v2' aqui.
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -22,20 +23,5 @@ const storage = new CloudinaryStorage({
     transformation: [{ width: 1920, height: 1080, crop: 'limit' }], // Opcional: Redimensiona imagens grandes para economizar espaço
   },
 });
-
-
-// Configura o storage para o Multer
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: async (req, file) => { // Usando uma função assíncrona
-    return {
-      folder: 'coleta-seletiva', // Garante que a pasta seja usada
-      allowed_formats: ['jpeg', 'png', 'jpg', 'gif', 'webp'],
-      transformation: [{ width: 1920, height: 1080, crop: 'limit' }],
-    };
-  },
-});
-
-export default storage;
 
 export default storage;
