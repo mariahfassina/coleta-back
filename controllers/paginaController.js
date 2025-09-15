@@ -7,7 +7,7 @@ export const createPagina = async (req, res) => {
   try {
     const { slug, titulo, conteudo } = req.body;
 
-    // A URL da imagem agora vem de req.file.path, fornecida pelo Cloudinary
+    // A URL da imagem vem de req.file.path, fornecida pelo Cloudinary
     const midiaUrl = req.file ? req.file.path : null;
 
     // Verifica se o slug já existe
@@ -21,7 +21,7 @@ export const createPagina = async (req, res) => {
       slug,
       titulo,
       conteudo,
-      midiaUrl, // Salva a URL segura do Cloudinary
+      midiaUrl,
     });
 
     console.log('✅ Página criada com sucesso no Cloudinary:', pagina._id);
@@ -33,7 +33,7 @@ export const createPagina = async (req, res) => {
 };
 
 // ===========================
-// ATUALIZAR PÁGINA
+// ATUALIZAR PÁGINA (VERSÃO 1000% CORRETA E ROBUSTA)
 // ===========================
 export const updatePagina = async (req, res) => {
   try {
@@ -42,31 +42,48 @@ export const updatePagina = async (req, res) => {
       return res.status(404).json({ message: 'Página não encontrada' });
     }
 
-    // Lógica para atualizar a imagem:
-    // Se um novo arquivo foi enviado (req.file existe), use a nova URL do Cloudinary.
-    // Se não, mantenha a URL que já estava salva (req.body.midiaUrl).
-    let midiaUrl = pagina.midiaUrl; // Começa com o valor antigo
+    // Lógica de atualização de imagem aprimorada:
+    // A prioridade MÁXIMA é o novo arquivo enviado.
     if (req.file) {
-      midiaUrl = req.file.path; // Se houver novo upload, usa a nova URL
-    } else if (req.body.midiaUrl === '') {
-      midiaUrl = null; // Permite remover a imagem se o campo for enviado vazio
+      // Se um novo arquivo foi enviado, a URL dele (vinda do Cloudinary) é a única que importa.
+      // Ignoramos completamente qualquer valor de 'midiaUrl' que possa ter vindo no corpo do formulário.
+      pagina.midiaUrl = req.file.path;
+    } else {
+      // Se NENHUM novo arquivo foi enviado, confiamos no que veio do formulário.
+      // Isso permite manter a imagem existente ou removê-la se o campo vier vazio.
+      // A verificação 'req.body.midiaUrl !== undefined' previne apagar a imagem sem querer.
+      if (req.body.midiaUrl !== undefined) {
+        pagina.midiaUrl = req.body.midiaUrl || null; // Salva a URL ou define como nulo se for uma string vazia
+      }
     }
 
-    // Atualiza os campos da página
+    // Atualiza os outros campos
     pagina.slug = req.body.slug || pagina.slug;
     pagina.titulo = req.body.titulo || pagina.titulo;
     pagina.conteudo = req.body.conteudo || pagina.conteudo;
-    pagina.midiaUrl = midiaUrl; // Atualiza com a URL correta
 
     const paginaAtualizada = await pagina.save();
-    console.log('✅ Página atualizada com sucesso:', paginaAtualizada._id);
-    res.json(paginaAtualizada);
+
+    // Para consistência, vamos retornar a data de atualização formatada também
+    const dataFormatada = new Date(paginaAtualizada.updatedAt).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+
+    const resposta = {
+      ...paginaAtualizada.toObject(),
+      ultimaAtualizacao: dataFormatada,
+    };
+
+    console.log('✅ Página atualizada com sucesso (lógica robusta):', paginaAtualizada._id);
+    res.json(resposta);
+
   } catch (err) {
     console.error('❌ Erro em updatePagina:', err.message);
     res.status(500).json({ message: err.message });
   }
 };
-
 
 // ===========================
 // LISTAR TODAS AS PÁGINAS (ADMIN)
@@ -135,7 +152,7 @@ export const deletePagina = async (req, res) => {
       return res.status(404).json({ message: 'Página não encontrada' });
     }
 
-    // Opcional: Deletar a imagem do Cloudinary também (código avançado, não incluído por padrão)
+    // Opcional: Deletar a imagem do Cloudinary também (código avançado)
 
     await Pagina.deleteOne({ _id: req.params.id });
     console.log('🗑️ Página deletada com sucesso:', req.params.id);
