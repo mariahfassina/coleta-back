@@ -1,82 +1,98 @@
 import Pagina from '../models/Pagina.js';
+import SibApiV3Sdk from 'sib-api-v3-sdk'; // Dependência para enviar e-mails
+import EmailSubscription from '../models/EmailSubscription.js'; // Modelo para buscar os e-mails dos inscritos
 
 // ===========================
 // FUNÇÃO DE NORMALIZAÇÃO DE SLUG
 // ===========================
-// Esta função centraliza a lógica de limpeza de slugs para ser usada em buscas.
 const normalizeSlug = (slug) => {
   if (!slug) return '';
-  // Normaliza para o formato de composição Unicode (NFC), remove caracteres invisíveis
-  // e espaços em branco no início/fim.
   return slug
     .normalize('NFC')
-    .replace(/[\u200B-\u200D\uFEFF]/g, '') // Remove caracteres de largura zero (invisíveis)
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
     .trim();
+};
+
+// ===========================
+// LÓGICA DE ENVIO DE E-MAIL (FUNÇÃO AUXILIAR)
+// ===========================
+const enviarNotificacaoDeCronograma = async () => {
+  try {
+    console.log('[+] Iniciando processo de notificação de atualização do cronograma.');
+    
+    const todosInscritos = await EmailSubscription.find({}, 'email');
+    
+    if (!todosInscritos || todosInscritos.length === 0) {
+      console.log('[i] Nenhum inscrito encontrado para notificar. Processo encerrado.');
+      return;
+    }
+
+    const listaDeEmails = todosInscritos.map(inscrito => ({ email: inscrito.email }));
+    console.log(`[i] Encontrados ${listaDeEmails.length} e-mails para notificação.`);
+
+    const defaultClient = SibApiV3Sdk.ApiClient.instance;
+    const apiKey = defaultClient.authentications['api-key'];
+    apiKey.apiKey = process.env.BREVO_API_KEY; // Sua chave da Brevo (Sendinblue)
+
+    const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+    const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+
+    sendSmtpEmail.subject = 'O cronograma de coleta de resíduos foi atualizado!';
+    sendSmtpEmail.htmlContent = `
+      <html>
+        <body>
+          <h1>Olá! O cronograma de coleta foi atualizado.</h1>
+          <p>Acesse nosso site para conferir as novas datas e não perca o dia da coleta no seu bairro.</p>
+          <p>Para visualizar o novo cronograma, <a href="https://coleta-react.vercel.app/cronograma-da-coleta-de-residuos" target="_blank">clique aqui</a>.</p>
+            
+
+          <p>Atenciosamente,</p>
+          <p><strong>Equipe Coleta</strong></p>
+        </body>
+      </html>
+    `;
+    // IMPORTANTE: Use seu e-mail e nome de remetente verificados na Brevo
+    sendSmtpEmail.sender = { name: 'Equipe Coleta', email: 'contato@coleta.com' }; 
+    sendSmtpEmail.to = listaDeEmails;
+
+    await apiInstance.sendTransacEmail(sendSmtpEmail );
+    console.log('[✓] Notificação de cronograma enviada com sucesso!');
+
+  } catch (error) {
+    console.error('[X] Erro CRÍTICO ao enviar notificação de cronograma:', error.response ? error.response.body : error.message);
+  }
 };
 
 
 // ===========================
-// BUSCAR PÁGINA POR SLUG (PUBLIC) - VERSÃO CORRIGIDA
+// BUSCAR PÁGINA POR SLUG (PUBLIC)
 // ===========================
 export const getPaginaBySlug = async (req, res) => {
   try {
-    // 1. Normaliza o slug recebido na URL para garantir que ele esteja "limpo".
     const slugParam = normalizeSlug(req.params.slug);
-
     if (!slugParam) {
       return res.status(400).json({ message: 'Slug inválido fornecido.' });
     }
-
-    // 2. Usa o pipeline de agregação do MongoDB para uma busca mais inteligente.
     const paginas = await Pagina.aggregate([
-      {
-        // 3. Cria um campo temporário 'normalizedSlug' para cada documento durante a consulta.
-        $addFields: {
-          normalizedSlug: {
-            // Aplica as mesmas transformações no slug que está no banco de dados.
-            // $trim remove espaços, e $toLower garante que a comparação não diferencia maiúsculas/minúsculas.
-            $toLower: {
-              $trim: {
-                input: '$slug'
-              }
-            }
-          }
-        }
-      },
-      {
-        // 4. Filtra os documentos onde o slug normalizado do banco corresponde ao slug normalizado da URL.
-        $match: {
-          normalizedSlug: slugParam.toLowerCase()
-        }
-      }
+      { $addFields: { normalizedSlug: { $toLower: { $trim: { input: '$slug' } } } } },
+      { $match: { normalizedSlug: slugParam.toLowerCase() } }
     ]);
-
-    // 5. Pega o primeiro (e único) resultado da agregação.
     const pagina = paginas[0];
-
     if (!pagina) {
-      // Adiciona um log no servidor para ajudar a depurar futuras falhas.
       console.error(`[LOG] Página não encontrada para o slug normalizado: "${slugParam.toLowerCase()}"`);
       return res.status(404).json({ message: 'Página não encontrada' });
     }
-
-    // Remove o campo temporário antes de enviar a resposta para o front-end.
     delete pagina.normalizedSlug;
-
-    // Formata a data como no seu código original.
     const dataFormatada = new Date(pagina.updatedAt).toLocaleDateString('pt-BR', {
       day: '2-digit', month: '2-digit', year: 'numeric'
     });
-
     const resposta = { ...pagina, ultimaAtualizacao: dataFormatada };
     res.json(resposta);
-
   } catch (err) {
     console.error("[ERRO] Falha no servidor ao buscar página por slug:", err);
     res.status(500).json({ message: err.message });
   }
 };
-
 
 // ===========================
 // CRIAR PÁGINA
@@ -85,12 +101,10 @@ export const createPagina = async (req, res) => {
   try {
     const { slug, titulo, conteudo } = req.body;
     const midiaUrl = req.file ? req.file.path : null;
-
     const paginaExistente = await Pagina.findOne({ slug });
     if (paginaExistente) {
       return res.status(400).json({ message: 'Slug já existe' });
     }
-
     const pagina = await Pagina.create({ slug, titulo, conteudo, midiaUrl });
     res.status(201).json(pagina);
   } catch (err) {
@@ -99,7 +113,7 @@ export const createPagina = async (req, res) => {
 };
 
 // ===========================
-// ATUALIZAR PÁGINA
+// ATUALIZAR PÁGINA (COM GATILHO CORRIGIDO)
 // ===========================
 export const updatePagina = async (req, res) => {
   try {
@@ -107,6 +121,8 @@ export const updatePagina = async (req, res) => {
     if (!pagina) {
       return res.status(404).json({ message: 'Página não encontrada' });
     }
+
+    const novaImagemEnviada = !!req.file;
 
     if (req.file) {
       pagina.midiaUrl = req.file.path;
@@ -119,6 +135,15 @@ export const updatePagina = async (req, res) => {
     pagina.conteudo = req.body.conteudo || pagina.conteudo;
 
     const paginaAtualizada = await pagina.save();
+
+    // --- GATILHO DE NOTIFICAÇÃO ---
+    if (paginaAtualizada.slug === 'cronograma-da-coleta-de-residuos' && novaImagemEnviada) {
+      console.log('[!] Gatilho acionado: Cronograma atualizado com nova imagem. Disparando notificações...');
+      // Chama a função de envio de forma assíncrona para não atrasar a resposta ao admin
+      enviarNotificacaoDeCronograma();
+    }
+    // --- FIM DO GATILHO ---
+
     res.json(paginaAtualizada);
   } catch (err) {
     res.status(500).json({ message: err.message });
