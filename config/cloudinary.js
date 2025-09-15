@@ -2,25 +2,33 @@ import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import dotenv from 'dotenv';
 
-// Carrega as variáveis de ambiente do arquivo .env
 dotenv.config();
 
-// Configura o SDK do Cloudinary com as credenciais do seu ambiente
-// Usamos a versão 1.x, então não precisamos do 'v2' aqui.
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-  secure: true, // Garante que as URLs sejam sempre https
-} );
+// --- INÍCIO DO TESTE DE DIAGNÓSTICO ---
+// Estamos colocando as credenciais diretamente no código para eliminar
+// qualquer chance de erro nas variáveis de ambiente do Render.
+// Lembre-se de remover isso depois que o teste funcionar.
 
-// Configura o storage para o Multer, que fará o upload para o Cloudinary
+cloudinary.config({
+  cloud_name: 'dihhpcbk4', // SEU CLOUD NAME, PEGUEI DAS IMAGENS ANTERIORES
+  api_key: process.env.CLOUDINARY_API_KEY, // Sua API Key
+  api_secret: process.env.CLOUDINARY_API_SECRET, // Seu API Secret
+  secure: true,
+});
+
+console.log('--- DIAGNÓSTICO CLOUDINARY ---');
+console.log('Cloud Name Usado:', 'dihhpcbk4');
+console.log('API Key Carregada:', process.env.CLOUDINARY_API_KEY ? 'Sim' : 'Não');
+console.log('--- FIM DO DIAGNÓSTICO ---');
+
+// --- FIM DO TESTE DE DIAGNÓSTICO ---
+
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'coleta-seletiva', // Nome da pasta onde as imagens serão salvas no Cloudinary
-    allowed_formats: ['jpeg', 'png', 'jpg', 'gif', 'webp'], // Formatos de imagem permitidos
-    transformation: [{ width: 1920, height: 1080, crop: 'limit' }], // Opcional: Redimensiona imagens grandes para economizar espaço
+    folder: 'TESTE-DEFINITIVO-PASTA', // <<-- NOME DA PASTA FORÇADO PARA O TESTE
+    allowed_formats: ['jpeg', 'png', 'jpg', 'gif', 'webp'],
+    transformation: [{ width: 1920, height: 1080, crop: 'limit' }],
   },
 });
 
