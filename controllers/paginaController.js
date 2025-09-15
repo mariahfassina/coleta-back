@@ -53,6 +53,18 @@ export const updatePagina = async (req, res) => {
         pagina.midiaUrl = req.body.midiaUrl || null;
       }
     }
+// FUNÇÃO DE DIAGNÓSTICO PARA LISTAR TODOS OS SLUGS
+export const getAllSlugs = async (req, res) => {
+  try {
+    // Busca todas as páginas, mas seleciona APENAS o campo 'slug' e 'titulo'
+    const paginas = await Pagina.find().select('slug titulo');
+    
+    // Retorna a lista de slugs como um JSON
+    res.json(paginas);
+  } catch (err) {
+    res.status(500).json({ message: 'Erro ao buscar slugs', error: err.message });
+  }
+};
 
     pagina.slug = req.body.slug || pagina.slug;
     pagina.titulo = req.body.titulo || pagina.titulo;
@@ -145,3 +157,4 @@ export const deletePagina = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
