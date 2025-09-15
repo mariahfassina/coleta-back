@@ -7,77 +7,37 @@ export const createPagina = async (req, res) => {
   try {
     const { slug, titulo, conteudo } = req.body;
     const midiaUrl = req.file ? req.file.path : null;
-
     const paginaExistente = await Pagina.findOne({ slug });
     if (paginaExistente) {
       return res.status(400).json({ message: 'Slug já existe' });
     }
-
-    const pagina = await Pagina.create({
-      slug,
-      titulo,
-      conteudo,
-      midiaUrl,
-    });
-
-    console.log('✅ Página criada com sucesso no Cloudinary:', pagina._id);
+    const pagina = await Pagina.create({ slug, titulo, conteudo, midiaUrl });
     res.status(201).json(pagina);
   } catch (err) {
-    console.error('❌ Erro em createPagina:', err.message);
     res.status(500).json({ message: err.message });
   }
 };
 
 // ===========================
-// ATUALIZAR PÁGINA (COM DIAGNÓSTICO)
+// ATUALIZAR PÁGINA
 // ===========================
 export const updatePagina = async (req, res) => {
-  // ================= INÍCIO DO DIAGNÓSTICO =================
-  console.log('--- DIAGNÓSTICO DE REQUISIÇÃO (UPDATE) ---');
-  console.log('Conteúdo de req.body:', JSON.stringify(req.body, null, 2));
-  console.log('Conteúdo de req.file:', req.file);
-  console.log('Existe req.file?', !!req.file);
-  console.log('--- FIM DO DIAGNÓSTICO ---');
-  // =================== FIM DO DIAGNÓSTICO ===================
-
   try {
     const pagina = await Pagina.findById(req.params.id);
     if (!pagina) {
       return res.status(404).json({ message: 'Página não encontrada' });
     }
-
     if (req.file) {
       pagina.midiaUrl = req.file.path;
-    } else {
-      if (req.body.midiaUrl !== undefined) {
-        pagina.midiaUrl = req.body.midiaUrl || null;
-      }
+    } else if (req.body.midiaUrl !== undefined) {
+      pagina.midiaUrl = req.body.midiaUrl || null;
     }
-// FUNÇÃO DE DIAGNÓSTICO PARA LISTAR TODOS OS SLUGS
-export const getAllSlugs = async (req, res) => {
-  try {
-    // Busca todas as páginas, mas seleciona APENAS o campo 'slug' e 'titulo'
-    const paginas = await Pagina.find().select('slug titulo');
-    
-    // Retorna a lista de slugs como um JSON
-    res.json(paginas);
-  } catch (err) {
-    res.status(500).json({ message: 'Erro ao buscar slugs', error: err.message });
-  }
-};
-
     pagina.slug = req.body.slug || pagina.slug;
     pagina.titulo = req.body.titulo || pagina.titulo;
     pagina.conteudo = req.body.conteudo || pagina.conteudo;
-
     const paginaAtualizada = await pagina.save();
-    const resposta = { ...paginaAtualizada.toObject() };
-
-    console.log('✅ Página atualizada:', paginaAtualizada._id);
-    res.json(resposta);
-
+    res.json(paginaAtualizada);
   } catch (err) {
-    console.error('❌ Erro em updatePagina:', err.message);
     res.status(500).json({ message: err.message });
   }
 };
@@ -90,7 +50,6 @@ export const getPaginas = async (req, res) => {
     const paginas = await Pagina.find().sort({ createdAt: -1 });
     res.json(paginas);
   } catch (err) {
-    console.error('❌ Erro em getPaginas:', err.message);
     res.status(500).json({ message: err.message });
   }
 };
@@ -104,21 +63,12 @@ export const getPaginaBySlug = async (req, res) => {
     if (!pagina) {
       return res.status(404).json({ message: 'Página não encontrada' });
     }
-
     const dataFormatada = new Date(pagina.updatedAt).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
+      day: '2-digit', month: '2-digit', year: 'numeric'
     });
-
-    const paginaComUltimaAtualizacao = {
-      ...pagina.toObject(),
-      ultimaAtualizacao: dataFormatada,
-    };
-
-    res.json(paginaComUltimaAtualizacao);
+    const resposta = { ...pagina.toObject(), ultimaAtualizacao: dataFormatada };
+    res.json(resposta);
   } catch (err) {
-    console.error('❌ Erro em getPaginaBySlug:', err.message);
     res.status(500).json({ message: err.message });
   }
 };
@@ -134,7 +84,6 @@ export const getPaginaById = async (req, res) => {
     }
     res.json(pagina);
   } catch (err) {
-    console.error('❌ Erro em getPaginaById:', err.message);
     res.status(500).json({ message: err.message });
   }
 };
@@ -148,13 +97,24 @@ export const deletePagina = async (req, res) => {
     if (!pagina) {
       return res.status(404).json({ message: 'Página não encontrada' });
     }
-
     await Pagina.deleteOne({ _id: req.params.id });
-    console.log('🗑️ Página deletada com sucesso:', req.params.id);
     res.json({ message: 'Página removida com sucesso' });
   } catch (err) {
-    console.error('❌ Erro em deletePagina:', err.message);
     res.status(500).json({ message: err.message });
   }
 };
 
+// ================================================================
+// FUNÇÃO DE DIAGNÓSTICO PARA LISTAR TODOS OS SLUGS (TEMPORÁRIA)
+// ================================================================
+export const getAllSlugs = async (req, res) => {
+  try {
+    // Busca todas as páginas, mas seleciona APENAS o campo 'slug' e 'titulo'
+    const paginas = await Pagina.find().select('slug titulo');
+    
+    // Retorna a lista de slugs como um JSON
+    res.json(paginas);
+  } catch (err) {
+    res.status(500).json({ message: 'Erro ao buscar slugs', error: err.message });
+  }
+};
