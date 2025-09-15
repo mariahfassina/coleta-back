@@ -9,20 +9,24 @@ import {
   getPaginaById,
   updatePagina,
   deletePagina,
+  getAllSlugs, // <-- 1. IMPORTA A NOVA FUNÇÃO DE DIAGNÓSTICO
 } from '../controllers/paginaController.js';
 
 // Middlewares
 import { protect } from '../middleware/authMiddleware.js';
-import storage from '../config/cloudinary.js'; // <-- 1. IMPORTA O STORAGE DO CLOUDINARY
+import storage from '../config/cloudinary.js';
 
 const router = express.Router();
 
 // Configura o Multer para usar o storage do Cloudinary
-const upload = multer({ storage }); // <-- 2. CRIA A INSTÂNCIA DO UPLOAD
+const upload = multer({ storage });
 
 // =================================================================
 // ROTAS
 // =================================================================
+
+// ROTA DE DIAGNÓSTICO PARA VER TODOS OS SLUGS (pública e temporária)
+router.get('/get-all-slugs-diagnostico', getAllSlugs); // <-- 2. ADICIONA A NOVA ROTA
 
 // Rotas públicas (não precisam de autenticação nem upload)
 router.get('/slug/:slug', getPaginaBySlug);
@@ -31,15 +35,13 @@ router.get('/slug/:slug', getPaginaBySlug);
 router.get('/admin', protect, getPaginas);
 
 // Rota para CRIAR uma página (agora com upload de imagem)
-// O middleware 'upload.single('midia')' intercepta a imagem e envia para o Cloudinary
-router.post('/', protect, upload.single('midia'), createPagina); // <-- 3. APLICA O MIDDLEWARE DE UPLOAD
+router.post('/', protect, upload.single('midia'), createPagina);
 
 // Rotas que operam por ID
 router
   .route('/:id')
   .get(protect, getPaginaById)
-  // Rota para ATUALIZAR uma página (agora com upload de imagem)
-  .put(protect, upload.single('midia'), updatePagina) // <-- 4. APLICA O MIDDLEWARE DE UPLOAD
+  .put(protect, upload.single('midia'), updatePagina)
   .delete(protect, deletePagina);
 
 export default router;
