@@ -1,9 +1,7 @@
 import Admin from '../models/Admin.js';
 import jwt from 'jsonwebtoken';
 
-// ===========================
-// Função auxiliar para gerar JWT
-// ===========================
+
 const generateToken = (id) => {
   if (!process.env.JWT_SECRET) {
     console.error("⚠️ ERRO: JWT_SECRET não está definido no .env!");
@@ -14,9 +12,7 @@ const generateToken = (id) => {
   });
 };
 
-// ===========================
-// Middleware para proteger rotas
-// ===========================
+
 export const protect = async (req, res, next) => {
   let token;
   if (
@@ -40,9 +36,7 @@ export const protect = async (req, res, next) => {
   }
 };
 
-// ===========================
-// Login de admin
-// ===========================
+
 const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
 
@@ -80,9 +74,7 @@ const loginAdmin = async (req, res) => {
   }
 };
 
-// ===========================
-// Retorna dados do admin logado
-// ===========================
+
 const getMe = async (req, res) => {
   try {
     if (!req.admin) {
@@ -101,9 +93,6 @@ const getMe = async (req, res) => {
   }
 };
 
-// ===========================
-// Listar todos os admins
-// ===========================
 const getAdmins = async (req, res) => {
   try {
     const admins = await Admin.find({}).select('-password');
@@ -115,3 +104,4 @@ const getAdmins = async (req, res) => {
 };
 
 export { loginAdmin, getAdmins, getMe };
+
