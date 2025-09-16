@@ -48,7 +48,7 @@ const enviarNotificacaoDeCronograma = async () => {
       </html>
     `;
 
-    sendSmtpEmail.sender = { name: 'Equipe Coleta', email: 'contato@coleta.com' }; 
+    sendSmtpEmail.sender = { name: 'Equipe Coleta', email: '20233017592@estudantes.ifpr.edu.br' }; 
     sendSmtpEmail.to = listaDeEmails;
 
     await apiInstance.sendTransacEmail(sendSmtpEmail );
@@ -181,4 +181,5 @@ export const getAllSlugs = async (req, res) => {
     res.status(500).json({ message: 'Erro ao buscar slugs', error: err.message });
   }
 };
+
 
