@@ -2,9 +2,7 @@ import Pagina from '../models/Pagina.js';
 import SibApiV3Sdk from 'sib-api-v3-sdk'; // Dependência para enviar e-mails
 import EmailSubscription from '../models/EmailSubscription.js'; // Modelo para buscar os e-mails dos inscritos
 
-// ===========================
-// FUNÇÃO DE NORMALIZAÇÃO DE SLUG
-// ===========================
+
 const normalizeSlug = (slug) => {
   if (!slug) return '';
   return slug
@@ -13,9 +11,7 @@ const normalizeSlug = (slug) => {
     .trim();
 };
 
-// ===========================
-// LÓGICA DE ENVIO DE E-MAIL (FUNÇÃO AUXILIAR)
-// ===========================
+
 const enviarNotificacaoDeCronograma = async () => {
   try {
     console.log('[+] Iniciando processo de notificação de atualização do cronograma.');
@@ -51,7 +47,7 @@ const enviarNotificacaoDeCronograma = async () => {
         </body>
       </html>
     `;
-    // IMPORTANTE: Use seu e-mail e nome de remetente verificados na Brevo
+
     sendSmtpEmail.sender = { name: 'Equipe Coleta', email: 'contato@coleta.com' }; 
     sendSmtpEmail.to = listaDeEmails;
 
@@ -64,9 +60,6 @@ const enviarNotificacaoDeCronograma = async () => {
 };
 
 
-// ===========================
-// BUSCAR PÁGINA POR SLUG (PUBLIC)
-// ===========================
 export const getPaginaBySlug = async (req, res) => {
   try {
     const slugParam = normalizeSlug(req.params.slug);
@@ -94,9 +87,7 @@ export const getPaginaBySlug = async (req, res) => {
   }
 };
 
-// ===========================
-// CRIAR PÁGINA
-// ===========================
+
 export const createPagina = async (req, res) => {
   try {
     const { slug, titulo, conteudo } = req.body;
@@ -112,9 +103,7 @@ export const createPagina = async (req, res) => {
   }
 };
 
-// ===========================
-// ATUALIZAR PÁGINA (COM GATILHO CORRIGIDO)
-// ===========================
+
 export const updatePagina = async (req, res) => {
   try {
     const pagina = await Pagina.findById(req.params.id);
@@ -136,13 +125,12 @@ export const updatePagina = async (req, res) => {
 
     const paginaAtualizada = await pagina.save();
 
-    // --- GATILHO DE NOTIFICAÇÃO ---
+
     if (paginaAtualizada.slug === 'cronograma-da-coleta-de-residuos' && novaImagemEnviada) {
       console.log('[!] Gatilho acionado: Cronograma atualizado com nova imagem. Disparando notificações...');
-      // Chama a função de envio de forma assíncrona para não atrasar a resposta ao admin
       enviarNotificacaoDeCronograma();
     }
-    // --- FIM DO GATILHO ---
+
 
     res.json(paginaAtualizada);
   } catch (err) {
@@ -150,9 +138,6 @@ export const updatePagina = async (req, res) => {
   }
 };
 
-// ===========================
-// LISTAR TODAS AS PÁGINAS (ADMIN)
-// ===========================
 export const getPaginas = async (req, res) => {
   try {
     const paginas = await Pagina.find().sort({ createdAt: -1 });
@@ -162,9 +147,7 @@ export const getPaginas = async (req, res) => {
   }
 };
 
-// ===========================
-// BUSCAR PÁGINA POR ID (ADMIN)
-// ===========================
+
 export const getPaginaById = async (req, res) => {
   try {
     const pagina = await Pagina.findById(req.params.id);
@@ -177,9 +160,6 @@ export const getPaginaById = async (req, res) => {
   }
 };
 
-// ===========================
-// DELETAR PÁGINA
-// ===========================
 export const deletePagina = async (req, res) => {
   try {
     const pagina = await Pagina.findById(req.params.id);
@@ -193,9 +173,6 @@ export const deletePagina = async (req, res) => {
   }
 };
 
-// ===========================
-// FUNÇÃO DE DIAGNÓSTICO (TEMPORÁRIA)
-// ===========================
 export const getAllSlugs = async (req, res) => {
   try {
     const paginas = await Pagina.find().select('slug titulo');
@@ -204,3 +181,4 @@ export const getAllSlugs = async (req, res) => {
     res.status(500).json({ message: 'Erro ao buscar slugs', error: err.message });
   }
 };
+
