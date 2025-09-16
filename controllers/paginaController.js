@@ -36,13 +36,13 @@ const enviarNotificacaoDeCronograma = async () => {
     sendSmtpEmail.subject = 'O cronograma de coleta de resíduos foi atualizado!';
     sendSmtpEmail.htmlContent = `
       <html>
-<head>
+ <head>
     <meta charset="UTF-8">
     <title>Cronograma de Coleta Atualizado</title>
     <style>
       body {
         font-family: 'Arial', sans-serif;
-        background-color: #f5f7fa;
+        background-color: #ffffff;
         color: #333333;
         margin: 0;
         padding: 0;
@@ -53,7 +53,7 @@ const enviarNotificacaoDeCronograma = async () => {
         margin: 30px auto;
         background-color: #ffffff;
         border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         overflow: hidden;
         padding: 20px;
       }
@@ -62,11 +62,11 @@ const enviarNotificacaoDeCronograma = async () => {
         padding-bottom: 20px;
       }
       .header img {
-        max-width: 150px;
+        max-width: 120px;
       }
       h1 {
         color: #2a7ae2;
-        font-size: 24px;
+        font-size: 22px;
         margin-bottom: 20px;
       }
       p {
@@ -85,17 +85,14 @@ const enviarNotificacaoDeCronograma = async () => {
       }
       .footer {
         margin-top: 30px;
-        font-size: 14px;
+        font-size: 13px;
         color: #777777;
         text-align: center;
-      }
-      .footer img {
-        max-width: 80px;
-        margin-top: 10px;
+        line-height: 1.4;
       }
     </style>
   </head>
-<body>
+  <body>
     <div class="container">
       <div class="header">
         <img src="https://res.cloudinary.com/dihhpcbk4/image/upload/v1758045221/coleta-app/yihsxzak1qj1azwnu3ln.jpg" alt="Logo Coleta Amiga">
@@ -112,8 +109,8 @@ const enviarNotificacaoDeCronograma = async () => {
       <p><strong>Equipe Coleta Amiga</strong></p>
 
       <div class="footer">
+        <p>Você está recebendo este e-mail porque se inscreveu para receber atualizações no nosso site.</p>
         <p>© 2025 Coleta Amiga. Todos os direitos reservados.</p>
-        <img src="https://res.cloudinary.com/dihhpcbk4/image/upload/v1758045221/coleta-app/yihsxzak1qj1azwnu3ln.jpg" alt="Logo Coleta Amiga">
       </div>
     </div>
   </body>
@@ -253,6 +250,7 @@ export const getAllSlugs = async (req, res) => {
     res.status(500).json({ message: 'Erro ao buscar slugs', error: err.message });
   }
 };
+
 
 
 
