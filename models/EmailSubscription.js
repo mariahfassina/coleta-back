@@ -9,7 +9,7 @@ const EmailSubscriptionSchema = new mongoose.Schema({
     unique: true,
     trim: true,
     lowercase: true,
-    // Regex simples para validação de e-mail
+
     match: [/.+\@.+\..+/, 'Por favor, insira um e-mail válido']
   },
   createdAt: {
@@ -18,8 +18,9 @@ const EmailSubscriptionSchema = new mongoose.Schema({
   }
 });
 
-// Crie o modelo
+
 const EmailSubscription = mongoose.model('EmailSubscription', EmailSubscriptionSchema);
 
-// Exporte o modelo como padrão
-export default EmailSubscription; // <<<--- A CORREÇÃO PRINCIPAL ESTÁ AQUI
+
+export default EmailSubscription; 
+
