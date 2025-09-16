@@ -5,7 +5,7 @@ import 'dotenv/config';
 import cors from 'cors';
 import connectDB from './config/db.js';
 
-// Importação das rotas
+
 import authRoutes from './routes/authRoutes.js';
 import paginaRoutes from './routes/paginaRoutes.js';
 import emailRoutes from './routes/emailRoutes.js';
@@ -21,23 +21,21 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
 connectDB();
 const app = express();
 
-// =============================================
-// CONFIGURAÇÃO OTIMIZADA DO CORS (MULTIPLAS ORIGENS)
-// =============================================
+
 const allowedOrigins = [
   'http://localhost:3000',
-  'https://coletareact.vercel.app'          // Para desenvolvimento local
+  'https://coletareact.vercel.app'          
 ];
 
 
-// Adiciona a URL do frontend do ambiente, se existir
+
 if (process.env.REACT_APP_API_URL ) {
   allowedOrigins.push(process.env.REACT_APP_API_URL);
 }
 
 app.use(cors({
   origin: function(origin, callback) {
-    // Permite requisições sem origin (ex: curl, Postman)
+   
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) === -1) {
       const msg = `O CORS para esta origem não está permitido: ${origin}`;
@@ -51,23 +49,19 @@ app.use(cors({
   optionsSuccessStatus: 200
 }));
 
-// Handle pre-flight requests
+
 app.options('*', cors());
 
-// =============================================
-// MIDDLEWARES
-// =============================================
-app.use(express.json());
-app.disable('x-powered-by'); // Remove header X-Powered-By
 
-// =============================================
-// ROTAS DA API
-// =============================================
+app.use(express.json());
+app.disable('x-powered-by'); 
+
+
 app.use('/api/auth', authRoutes);
 app.use('/api/paginas', paginaRoutes);
 app.use('/api', emailRoutes);
 
-// Health Check
+
 app.get('/health', (req, res) => {
   res.status(200).json({ 
     status: 'OK',
@@ -75,15 +69,8 @@ app.get('/health', (req, res) => {
   });
 });
 
-// =============================================
-// SERVIÇO DE ARQUIVOS ESTÁTICOS (APENAS BACKEND)
-// =============================================
-// const __dirname = path.resolve(); // Esta linha é removida pois já definimos __dirname acima
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
-// =============================================
-// MANEJO DE ERROS
-// =============================================
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 app.use((req, res) => {
   res.status(404).json({ 
     success: false,
@@ -100,9 +87,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// =============================================
-// INICIALIZAÇÃO DO SERVIDOR
-// =============================================
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`
@@ -111,5 +95,6 @@ app.listen(PORT, () => {
   🌐 URLs permitidas: ${allowedOrigins.join(', ')}
   `);
 });
+
 
 
