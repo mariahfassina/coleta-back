@@ -7,4 +7,5 @@ const router = express.Router();
 
 router.post('/subscribe', subscribeEmail);
 
-export default router; // <<<--- ESSA É A LINHA MAIS IMPORTANTE
+export default router; 
+
