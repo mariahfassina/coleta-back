@@ -95,10 +95,10 @@ const enviarNotificacaoDeCronograma = async () => {
       }
     </style>
   </head>
-  <body>
+<body>
     <div class="container">
       <div class="header">
-        <img src="uploads/logo-coleta-amiga.png" alt="Logo Coleta Amiga">
+        <img src="https://res.cloudinary.com/dihhpcbk4/image/upload/v1758045221/coleta-app/yihsxzak1qj1azwnu3ln.jpg" alt="Logo Coleta Amiga">
       </div>
 
       <h1>Olá!</h1>
@@ -113,7 +113,7 @@ const enviarNotificacaoDeCronograma = async () => {
 
       <div class="footer">
         <p>© 2025 Coleta Amiga. Todos os direitos reservados.</p>
-        <img src="uploads/logo-coleta-amiga.png" alt="Logo Coleta Amiga">
+        <img src="https://res.cloudinary.com/dihhpcbk4/image/upload/v1758045221/coleta-app/yihsxzak1qj1azwnu3ln.jpg" alt="Logo Coleta Amiga">
       </div>
     </div>
   </body>
@@ -253,6 +253,7 @@ export const getAllSlugs = async (req, res) => {
     res.status(500).json({ message: 'Erro ao buscar slugs', error: err.message });
   }
 };
+
 
 
 
