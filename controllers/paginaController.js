@@ -36,16 +36,88 @@ const enviarNotificacaoDeCronograma = async () => {
     sendSmtpEmail.subject = 'O cronograma de coleta de resíduos foi atualizado!';
     sendSmtpEmail.htmlContent = `
       <html>
-        <body>
-          <h1>Olá! O cronograma de coleta foi atualizado.</h1>
-          <p>Acesse nosso site para conferir as novas datas e não perca o dia da coleta no seu bairro.</p>
-          <p>Para visualizar o novo cronograma, <a href="https://coleta-react.vercel.app/cronograma-da-coleta-de-residuos" target="_blank">clique aqui</a>.</p>
-            
+<head>
+    <meta charset="UTF-8">
+    <title>Cronograma de Coleta Atualizado</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f5f7fa;
+        color: #333333;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        width: 100%;
+        max-width: 600px;
+        margin: 30px auto;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        overflow: hidden;
+        padding: 20px;
+      }
+      .header {
+        text-align: center;
+        padding-bottom: 20px;
+      }
+      .header img {
+        max-width: 150px;
+      }
+      h1 {
+        color: #2a7ae2;
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+      p {
+        font-size: 16px;
+        line-height: 1.6;
+      }
+      a.button {
+        display: inline-block;
+        margin: 20px 0;
+        padding: 12px 25px;
+        background-color: #2a7ae2;
+        color: #ffffff !important;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+      }
+      .footer {
+        margin-top: 30px;
+        font-size: 14px;
+        color: #777777;
+        text-align: center;
+      }
+      .footer img {
+        max-width: 80px;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <img src="uploads/logo-coleta-amiga.png" alt="Logo Coleta Amiga">
+      </div>
 
-          <p>Atenciosamente,</p>
-          <p><strong>Equipe Coleta</strong></p>
-        </body>
-      </html>
+      <h1>Olá!</h1>
+      <p>O cronograma de coleta foi atualizado. Acesse nosso site para conferir as novas datas e não perca o dia da coleta no seu bairro.</p>
+      
+      <p style="text-align:center;">
+        <a href="https://coletareact.vercel.app" target="_blank" class="button">Ver Cronograma</a>
+      </p>
+
+      <p>Atenciosamente,</p>
+      <p><strong>Equipe Coleta Amiga</strong></p>
+
+      <div class="footer">
+        <p>© 2025 Coleta Amiga. Todos os direitos reservados.</p>
+        <img src="uploads/logo-coleta-amiga.png" alt="Logo Coleta Amiga">
+      </div>
+    </div>
+  </body>
+</html>
     `;
 
     sendSmtpEmail.sender = { name: 'Equipe Coleta', email: '20233017592@estudantes.ifpr.edu.br' }; 
@@ -181,5 +253,6 @@ export const getAllSlugs = async (req, res) => {
     res.status(500).json({ message: 'Erro ao buscar slugs', error: err.message });
   }
 };
+
 
 
