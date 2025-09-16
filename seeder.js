@@ -1,14 +1,10 @@
-// seeder.js
-
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import Admin from './models/Admin.js';
 import Pagina from './models/Pagina.js';
 
-// Carrega as variáveis de ambiente
 dotenv.config();
 
-// Conecta ao banco de dados
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
@@ -19,16 +15,14 @@ const connectDB = async () => {
   }
 };
 
-// Dados iniciais
 const adminUser = {
   nome: 'Cassia',
   email: 'cassia@email.com',
-  password: 'senha123', // Senha para o primeiro login
-  needsPasswordChange: true // Usuário deve trocar a senha no primeiro login
+  password: 'senha123',
+  needsPasswordChange: true
 };
 
 const paginasData = [
-  // --- Páginas de Conteúdo Principal ---
   {
     slug: 'como-fazer-separacao',
     titulo: 'Como fazer a separação?',
@@ -37,7 +31,7 @@ const paginasData = [
       <p>Separe os resíduos recicláveis, considerando o que for de papel, plástico, vidro e metal.</p>
       <p>Enxágue as embalagens e as coloque no saco de ráfia ou reaproveite sacolas e caixas de papelão. Depois, coloque na frente de sua casa/comércio, mas lembrando, é necessário que seja nos dias e períodos específicos, para o caminhão da <strong>“Coleta Amiga”</strong> passar recolhendo esses materiais, que são encaminhados para a Unidade de Valorização de Recicláveis do município.</p>
     `,
-    midiaUrl: 'https://youtu.be/cfYXew_H0LU' // Link do vídeo do YouTube
+    midiaUrl: 'https://youtu.be/cfYXew_H0LU'
   },
   {
     slug: 'porque-separar',
@@ -59,7 +53,7 @@ const paginasData = [
         <li><strong>Metais:</strong> latinhas de cerveja e refrigerante, latas de doces, leite em pó, azeite, latinhas de sardinha, arames, embalagens metálicas, latinhas de milho e ervilha, entre outros.</li>
       </ul>
     `,
-    midiaUrl: '' // Sem mídia para esta página
+    midiaUrl: ''
   },
   {
     slug: 'quem-somos',
@@ -80,7 +74,7 @@ const paginasData = [
       <h2>Qual o local de destino dos recicláveis?</h2>
       <p>Todo material previamente separado pela população e recolhido com auxílio dos caminhões da Coleta Amiga é encaminhado para a <strong>Unidade de Valorização de Recicláveis (UVR)</strong>.</p>
     `,
-    midiaUrl: '/uploads/foto-acamar-uvr.jpg' // Caminho inicial da imagem, que será upada depois
+    midiaUrl: '/uploads/foto-acamar-uvr.jpg'
   },
   {
     slug: 'contato',
@@ -98,35 +92,31 @@ const paginasData = [
     `,
     midiaUrl: ''
   },
-  // --- Seções Especiais tratadas como Páginas ---
   {
     slug: 'home-hero',
     titulo: 'Banner da Página Inicial',
     conteudo: 'Imagem principal do caminhão da coleta.',
-    midiaUrl: '/uploads/caminhao-coleta.jpg' // Caminho da imagem que será upada
+    midiaUrl: '/uploads/caminhao-coleta.jpg'
   },
   {
     slug: 'home-cronograma',
     titulo: 'Imagem do Cronograma',
     conteudo: 'Imagem exibida na seção de cronograma da página inicial.',
-    midiaUrl: '/uploads/cronograma-atual.png' // Caminho da imagem que será upada
+    midiaUrl: '/uploads/cronograma-atual.png'
   },
   {
     slug: 'total-coletado-grafico',
     titulo: 'Gráfico do Total Coletado',
     conteudo: 'Imagem do gráfico de evolução da coleta.',
-    midiaUrl: '/uploads/grafico-total-coletado.png' // Caminho da imagem que será upada
+    midiaUrl: '/uploads/grafico-total-coletado.png'
   },
 ];
 
-// Função para importar os dados
 const importData = async () => {
   try {
-    // Apaga dados antigos para evitar duplicatas
     await Admin.deleteMany();
     await Pagina.deleteMany();
 
-    // Insere os novos dados
     await Admin.create(adminUser);
     await Pagina.create(paginasData);
 
@@ -138,7 +128,6 @@ const importData = async () => {
   }
 };
 
-// Função para destruir os dados
 const destroyData = async () => {
   try {
     await Admin.deleteMany();
@@ -152,7 +141,6 @@ const destroyData = async () => {
   }
 };
 
-// Conecta ao DB e decide qual função rodar
 const run = async () => {
   await connectDB();
   if (process.argv[2] === '-d') {
